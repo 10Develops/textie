@@ -125,33 +125,3 @@ body
 {
 	background:	black;
 }
-
-@media only screen and (max-width:420px) {
-	#text
-	{
-		width: 390px;
-		height: 780px;
-		margin-top: 2px;
-		margin-left: -4px;
-	}
-
-	#home-text
-	{
-		margin-right: 50px;
-	}
-
-	#getit
-	{
-		margin-top:10px;
-	}
-
-	#current-version
-	{
-		margin-top: 2px;
-	}
-
-	#header
-	{
-		margin-left: 82px;
-	}
-}
