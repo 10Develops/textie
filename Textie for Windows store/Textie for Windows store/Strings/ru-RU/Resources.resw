@@ -1,0 +1,327 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutSettingsPivotItemHeader.Text" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="AccentColorRadioButton.Content" xml:space="preserve">
+    <value>Элемент</value>
+  </data>
+  <data name="AddTabButton.Label" xml:space="preserve">
+    <value>Новая вкладка</value>
+  </data>
+  <data name="AddTabItem.Text" xml:space="preserve">
+    <value>Добавить вкладку</value>
+  </data>
+  <data name="AddTabToolTip" xml:space="preserve">
+    <value>Новая вкладка</value>
+  </data>
+  <data name="AllTabsButton.Label" xml:space="preserve">
+    <value>Все вкладки</value>
+  </data>
+  <data name="AllTabsToolTip" xml:space="preserve">
+    <value>Все вкладки</value>
+  </data>
+  <data name="AppThemeTextBlock.Text" xml:space="preserve">
+    <value>Тема приложения</value>
+  </data>
+  <data name="CloseAllTabsItem.Text" xml:space="preserve">
+    <value>Очистить вкладки</value>
+  </data>
+  <data name="CloseOtherTabsItem.Text" xml:space="preserve">
+    <value>Закрыть другие вкладки</value>
+  </data>
+  <data name="CloseTabButton.Label" xml:space="preserve">
+    <value>Закрыть вкладку</value>
+  </data>
+  <data name="CloseTabToolTip" xml:space="preserve">
+    <value>Закрыть вкладку</value>
+  </data>
+  <data name="ColorsSettingsHyperlinkButton.Content" xml:space="preserve">
+    <value>Открыть настройки цветов Windows</value>
+  </data>
+  <data name="CopyButton.Text" xml:space="preserve">
+    <value>Копировать</value>
+  </data>
+  <data name="CutButton.Text" xml:space="preserve">
+    <value>Вырезать</value>
+  </data>
+  <data name="DarkRadioButton.Content" xml:space="preserve">
+    <value>Темный</value>
+  </data>
+  <data name="DarkTextBoxThemeComboBoxItem.Content" xml:space="preserve">
+    <value>Темный</value>
+  </data>
+  <data name="DateAndTimeItem.Text" xml:space="preserve">
+    <value>Дата и время</value>
+  </data>
+  <data name="EditButton.Label" xml:space="preserve">
+    <value>Правка</value>
+  </data>
+  <data name="EditToolTip" xml:space="preserve">
+    <value>Правка</value>
+  </data>
+  <data name="FindAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Найти текст</value>
+  </data>
+  <data name="FindButton.Label" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="FormatButton.Label" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="FullScreenButton.Label" xml:space="preserve">
+    <value>Во весь экран</value>
+  </data>
+  <data name="GeneralSettingsPivotItemHeader.Text" xml:space="preserve">
+    <value>Общий</value>
+  </data>
+  <data name="HighlightButton.Text" xml:space="preserve">
+    <value>Отметить текст</value>
+  </data>
+  <data name="InsertButton.Label" xml:space="preserve">
+    <value>Вставка</value>
+  </data>
+  <data name="LaunchButton.Label" xml:space="preserve">
+    <value>Запустить</value>
+  </data>
+  <data name="LightRadioButton.Content" xml:space="preserve">
+    <value>Светлый</value>
+  </data>
+  <data name="LightTextBoxThemeComboBoxItem.Content" xml:space="preserve">
+    <value>Светлый</value>
+  </data>
+  <data name="LowercaseButton.Text" xml:space="preserve">
+    <value>Строчная</value>
+  </data>
+  <data name="MatchCaseCheckBox.Content" xml:space="preserve">
+    <value>Учитывать регистр</value>
+  </data>
+  <data name="NewWindowButton.Label" xml:space="preserve">
+    <value>Новое окно</value>
+  </data>
+  <data name="NoteChangeTextBlock.Text" xml:space="preserve">
+    <value>Примечание: Изменения вступят в силу после перезапуска приложения.</value>
+  </data>
+  <data name="OpenButton.Label" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="OpenToolTip" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="PasteButton.Text" xml:space="preserve">
+    <value>Вставить</value>
+  </data>
+  <data name="PrintButton.Label" xml:space="preserve">
+    <value>Печать</value>
+  </data>
+  <data name="RecentFilesButton.Label" xml:space="preserve">
+    <value>Последние файлы</value>
+  </data>
+  <data name="RedoButton.Label" xml:space="preserve">
+    <value>Вернуть</value>
+  </data>
+  <data name="RemoveHighlightButton.Text" xml:space="preserve">
+    <value>Убрать отметку</value>
+  </data>
+  <data name="ReplaceButton.Label" xml:space="preserve">
+    <value>Заменить</value>
+  </data>
+  <data name="SaveAllButton.Label" xml:space="preserve">
+    <value>Сохранить все</value>
+  </data>
+  <data name="SaveAsButton.Label" xml:space="preserve">
+    <value>Сохранить как...</value>
+  </data>
+  <data name="SaveButton.Label" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="SaveToolTip" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="SearchEngineTextBlock.Text" xml:space="preserve">
+    <value>Поисковая система</value>
+  </data>
+  <data name="SelectAllButton.Text" xml:space="preserve">
+    <value>Выделить все</value>
+  </data>
+  <data name="SettingsButton.Label" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SettingsTextBarBlock.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="ShareButton.Label" xml:space="preserve">
+    <value>Поделиться</value>
+  </data>
+  <data name="TabItem.Text" xml:space="preserve">
+    <value>Табуляция</value>
+  </data>
+  <data name="TextBoxThemeTextBlock.Text" xml:space="preserve">
+    <value>Тема текстового поля</value>
+  </data>
+  <data name="ThemeColorRadioButton.Content" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="ThemeTextBlock.Text" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="TitleBarColorTextBlock.Text" xml:space="preserve">
+    <value>Цвет заголовка окна</value>
+  </data>
+  <data name="TransparencyToggleSwitch.Header" xml:space="preserve">
+    <value>Эффекты прозрачности в содержании</value>
+  </data>
+  <data name="UndoButton.Label" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="UppercaseButton.Text" xml:space="preserve">
+    <value>Прописная</value>
+  </data>
+  <data name="VibrateNotAvailableTextBlock.Text" xml:space="preserve">
+    <value>Вибрация недоступна в этом устройстве.</value>
+  </data>
+  <data name="VibrateToggleSwitch.Header" xml:space="preserve">
+    <value>Вибрировать при открытии меню правки</value>
+  </data>
+  <data name="VibrationTextBlock.Text" xml:space="preserve">
+    <value>Вибрация</value>
+  </data>
+  <data name="WhatAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Найти что</value>
+  </data>
+  <data name="WindowsDefaultRadioButton.Content" xml:space="preserve">
+    <value>По умолчанию Windows</value>
+  </data>
+  <data name="WithAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Заменить на</value>
+  </data>
+  <data name="WordWrapItem.Text" xml:space="preserve">
+    <value>Перенос по словам</value>
+  </data>
+  <data name="ZoomInButton.Label" xml:space="preserve">
+    <value>Увеличить</value>
+  </data>
+  <data name="ZoomOutButton.Label" xml:space="preserve">
+    <value>Уменьшить</value>
+  </data>
+  <data name="ZoomTextBlock.Text" xml:space="preserve">
+    <value>Масштаб</value>
+  </data>
+</root>

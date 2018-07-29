@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
+  <Identity Name="72ae0a2e-24b8-4410-a695-e522f5049c95" Publisher="CN=user" Version="0.9.4.0" />
+  <mp:PhoneIdentity PhoneProductId="72ae0a2e-24b8-4410-a695-e522f5049c95" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Properties>
+    <DisplayName>Textie Editor</DisplayName>
+    <PublisherDisplayName>10Develops</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.16299.64" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Textie.App">
+      <uap:VisualElements DisplayName="Textie Editor" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Textie Editor is a text editor exclusivly for Microsoft Store." BackgroundColor="transparent">
+        <uap:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png" ShortName="Textie">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="portrait" />
+          <uap:Rotation Preference="landscape" />
+          <uap:Rotation Preference="landscapeFlipped" />
+        </uap:InitialRotationPreference>
+      </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="textie">
+            <uap:Logo>images\icon.png</uap:Logo>
+            <uap:DisplayName>Textie URI Scheme</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="textie">
+            <uap:DisplayName>Textie</uap:DisplayName>
+            <uap:Logo>Textie.png</uap:Logo>
+            <uap:InfoTip>Textie Editor</uap:InfoTip>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.txt</uap:FileType>
+              <uap:FileType ContentType="text/html">.html</uap:FileType>
+              <uap:FileType ContentType="text/html">.htm</uap:FileType>
+              <uap:FileType ContentType="text/xml">.xml</uap:FileType>
+              <uap:FileType ContentType="text/plain">.text</uap:FileType>
+              <uap:FileType ContentType="text/css">.css</uap:FileType>
+              <uap:FileType ContentType="application/javascript">.js</uap:FileType>
+              <uap:FileType ContentType="text/x-c">.c</uap:FileType>
+              <uap:FileType ContentType="text/x-c">.cpp</uap:FileType>
+              <uap:FileType ContentType="text/x-c">.cs</uap:FileType>
+              <uap:FileType ContentType="text/x-c">.h</uap:FileType>
+              <uap:FileType ContentType="text/x-c">.d</uap:FileType>
+              <uap:FileType ContentType="text/x-log">.log</uap:FileType>
+              <uap:FileType ContentType="text/rtf">.rtf</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+</Package>
