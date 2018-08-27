@@ -1,0 +1,157 @@
+﻿<Page x:Name="SettingsPG"
+    x:Class="Textie_for_Windows_store.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Textie_for_Windows_store"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Style x:Key="TitleBarBackButtonNormalStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="Content" Value="" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="Content" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TitleBarBackButtonSmallStyle" TargetType="Button" BasedOn="{StaticResource TitleBarBackButtonNormalStyle}">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Height" Value="32.4" />
+            <Setter Property="Width" Value="32.4" />
+        </Style>
+    </Page.Resources>
+    
+    <Grid x:Name="SettingsGridMain" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="SettingsGridMain_Loaded">
+        <Grid x:Name="AppTitleBar" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="32.4"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="45"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="LeftAppTitleBar" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64.8">
+                <Button x:Name="BackButton" Style="{StaticResource NavigationBackButtonSmallStyle}" Click="BackButton_Click"/>
+            </Grid>
+            <Grid x:Name="MiddleAppTitleBar" Grid.Column="1" VerticalAlignment="Top">
+                <TextBlock x:Name="SettingsTextBarBlock" x:Uid="SettingsTextBarBlock" Text="[settings]"
+                       Style="{StaticResource CaptionTextBlockStyle}" FontSize="15" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+            </Grid>
+        </Grid>
+        <Grid x:Name="SettingsContentGrid">
+            <Pivot x:Name="SettingsPivotMain">
+                <PivotItem x:Name="GeneralSettingsPivotItem" Style="{StaticResource PivotTitleContentControlStyle}">
+                    <PivotItem.Header>
+                        <TextBlock Name="GeneralSettingsPivotItemHeader" x:Uid="GeneralSettingsPivotItemHeader" Text="[general]" FontSize="18" />
+                    </PivotItem.Header>
+                    <ScrollViewer>
+                        <StackPanel>
+                            <StackPanel>
+                                <TextBlock x:Name="ThemeTextBlock" x:Uid="ThemeTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[theme]"/>
+                                <StackPanel>
+                                    <TextBlock x:Name="AppThemeTextBlock" x:Uid="AppThemeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[apptheme]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                    <StackPanel Orientation="Vertical">
+                                        <RadioButton x:Name="WindowsDefaultRadioButton" x:Uid="WindowsDefaultRadioButton" Tag="WD" Width="152" GroupName="Theme" Checked="WindowsDefaultRadioButton_Checked" Content="[windowsdefault]"/>
+                                        <StackPanel>
+                                            <ToggleSwitch x:Name="TransparencyToggleSwitch" x:Uid="TransparencyToggleSwitch" Header="[transparencyeffectsincontent]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Toggled="TransparencyToggleSwitch_Toggled"/>
+                                        </StackPanel>
+                                        <RadioButton x:Name="LightRadioButton" x:Uid="LightRadioButton" Tag="Light" GroupName="Theme" Checked="LightRadioButton_Checked" Content="[light]"/>
+                                        <RadioButton x:Name="DarkRadioButton" x:Uid="DarkRadioButton" Tag="Dark" GroupName="Theme" Checked="DarkRadioButton_Checked" Content="[dark]"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock x:Name="TextBoxThemeTextBlock" x:Uid="TextBoxThemeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[textboxtheme]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                    <StackPanel>
+                                        <ComboBox x:Name="TextBoxThemeComboBox" SelectionChanged="TextBoxThemeComboBox_SelectionChanged" Margin="0,2,0,2">
+                                            <ComboBoxItem x:Name="LightTextBoxThemeComboBoxItem" x:Uid="LightTextBoxThemeComboBoxItem" Content="[light]"/>
+                                            <ComboBoxItem x:Name="DarkTextBoxThemeComboBoxItem" x:Uid="DarkTextBoxThemeComboBoxItem" Content="[dark]"/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock x:Name="TitleBarColorTextBlock" x:Uid="TitleBarColorTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[titlebarcolor]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                    <StackPanel Orientation="Vertical">
+                                        <RadioButton x:Name="ThemeColorRadioButton" x:Uid="ThemeColorRadioButton" Tag="Theme" Content="[theme]" GroupName="TitleBarColor" Checked="ThemeColorRadioButton_Checked" />
+                                        <RadioButton x:Name="AccentColorRadioButton" x:Uid="AccentColorRadioButton" Tag="Accent" Content="[accent]" GroupName="TitleBarColor" Checked="AccentColorRadioButton_Checked" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock x:Name="NoteChangeTextBlock" x:Uid="NoteChangeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[noterestart]" Visibility="Collapsed"/>
+                                <HyperlinkButton x:Name="ColorsSettingsHyperlinkButton" x:Uid="ColorsSettingsHyperlinkButton" NavigateUri="ms-settings:personalization-colors" Content="[opencolorsettings]"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock x:Name="SearchEngineTextBlock" x:Uid="SearchEngineTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[searchengine]"/>
+                                <StackPanel Orientation="Vertical">
+                                    <RadioButton x:Name="BingRadioButton" Content="Bing" GroupName="SearchEngine" Checked="BingRadioButton_Checked" />
+                                    <RadioButton x:Name="GoogleRadioButton" Content="Google" GroupName="SearchEngine" Checked="GoogleRadioButton_Checked" />
+                                    <RadioButton x:Name="YahooRadioButton" Content="Yahoo" GroupName="SearchEngine" Checked="YahooRadioButton_Checked" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock x:Name="VibrationTextBlock" x:Uid="VibrationTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[vibration]"/>
+                                <StackPanel Orientation="Vertical">
+                                    <ToggleSwitch x:Name="VibrateToggleSwitch" x:Uid="VibrateToggleSwitch" Header="[vibrate]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Toggled="VibrateToggleSwitch_Toggled"/>
+                                    <TextBlock x:Name="VibrateNotAvailableTextBlock" x:Uid="VibrateNotAvailableTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[vibrationnotavailable]" Visibility="Collapsed"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+                <PivotItem x:Name="AboutSettingsPivotItem" Style="{StaticResource PivotTitleContentControlStyle}">
+                    <PivotItem.Header>
+                        <TextBlock Name="AboutSettingsPivotItemHeader" x:Uid="AboutSettingsPivotItemHeader" Text="[about]" FontSize="18" />
+                    </PivotItem.Header>
+                    <StackPanel>
+                        <TextBlock x:Name="ProgramVersionTextBlock" Text="[version]" />
+                        <TextBlock x:Name="ThanksTextBlock" Text="Thanks to Diederik Krols for UWP Composition BackDrop Control" />
+                        <TextBlock x:Name="CopyrightTextBlock" Text="[copyright]" />
+                        <Button x:Name="FeedbackButton" x:Uid="FeedbackButton" Content="Send feedback" Margin="0,4,0,0" Visibility="Collapsed" Click="FeedbackButton_Click"/>
+                    </StackPanel>
+                </PivotItem>
+            </Pivot>
+        </Grid>
+    </Grid>
+</Page>
