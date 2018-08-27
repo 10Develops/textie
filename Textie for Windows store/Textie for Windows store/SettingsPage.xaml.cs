@@ -157,7 +157,7 @@ namespace Textie_for_Windows_store
 
             if (Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported())
             {
-                this.feedbackButton.Visibility = Visibility.Visible;
+                this.FeedbackButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -276,6 +276,12 @@ namespace Textie_for_Windows_store
             }
         }
 
+        private async void FeedbackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+            await launcher.LaunchAsync();
+        }
+
         #region "Methods"
         private bool On_BackRequested()
         {
@@ -315,6 +321,7 @@ namespace Textie_for_Windows_store
                 {
                     var AcrylicSystemBrush =
                         Resources["SystemControlChromeMediumAcrylicWindowMediumBrush"] as AcrylicBrush;
+
                     if (titleBarColor == "0")
                     {
                         AppTitleBar.Background = AcrylicSystemBrush;
@@ -346,11 +353,5 @@ namespace Textie_for_Windows_store
             AppTitleBar.Background = Resources["SystemControlBackgroundAccentBrush"] as Brush;
         }
         #endregion
-
-        private async void feedbackButton_Click(object sender, RoutedEventArgs e)
-        {
-            var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
-            await launcher.LaunchAsync();
-        }
     }
 }

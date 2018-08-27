@@ -993,6 +993,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
         <x:Double x:Key="SecondaryCommandButtonWidth">272</x:Double>
     </Page.Resources>
 
@@ -1040,7 +1041,9 @@
                             <FontIcon Glyph="&#xF5ED;" FontFamily="ms-appx:///Assets/segmdl2.ttf#Segoe MDL2 Assets"/>
                         </AppBarButton.Icon>
                         <Flyout x:Name="AllTabsFlyout" Opening="AllTabsFlyout_Opening">
-                            <ListView x:Name="AllTabsList" HorizontalAlignment="Left" Width="150" SelectionChanged="AllTabsList_SelectionChanged">
+                            <Grid x:Name="AllTabsGrid">
+                                <StackPanel x:Name="AllTabsPanel" Padding="4" HorizontalAlignment="Left" Width="150">
+                            <ListView x:Name="AllTabsList" SelectionChanged="AllTabsList_SelectionChanged">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Width="150" Name="ListViewItemGrid" RightTapped="ListViewItemGrid_RightTapped">
@@ -1051,7 +1054,7 @@
                                             <TextBlock Text="{Binding Title}" TextWrapping="Wrap" VerticalAlignment="Center" />
                                             <!--Use Behaviors SDK here, and no code behind is needed -->
                                             <AppBarButton x:Uid="CloseTab" Grid.Column="1" Width="30" Height="30" HorizontalAlignment="Right" Click="CloseTabAppBarButton_Click">
-                                                <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="18" HorizontalAlignment="Center" Margin="0,-7.6,0,0"  />
+                                                        <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="18" HorizontalAlignment="Center" Margin="-7.6,-7.6,0,0"/>
                                             </AppBarButton>
 
                                             <FlyoutBase.AttachedFlyout>
@@ -1066,10 +1069,13 @@
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
+                                </StackPanel>
+                            </Grid>
                         </Flyout>
                     </AppBarButton>
                 </local:RichEditBoxPivot.LeftHeader>
                 <local:RichEditBoxPivot.RightHeader>
+                    <Grid x:Name="MainCommandBarGrid">
                     <local:TextieCommandBar x:Name="MainCommandBar" MaxHeight="48.5" Opening="MainCommandBar_Opening">
                         <AppBarButton x:Name="AddTabButton" Click="AddTabButton_Click" Width="54" Label="[newtab]">
                             <AppBarButton.Icon>
@@ -1115,201 +1121,190 @@
                         </AppBarButton>
                         <FlyoutBase.AttachedFlyout>
                             <Flyout x:Name="SecondaryCommands" Closed="SecondaryCommands_Closed">
-                                <StackPanel x:Name="SecondaryCommandsPanel" Width="{StaticResource SecondaryCommandButtonWidth}">
-                                    <ScrollViewer>
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <AppBarButton x:Name="NewWindowButton" x:Uid="NewWindowButton" Click="NewWindowButton_Click" Label="[newwindow]">
+                                <Grid x:Name="SecondaryCommandsGrid">
+                                    <StackPanel x:Name="SecondaryCommandsPanel" Width="{StaticResource SecondaryCommandButtonWidth}" Padding="4">
+                                        <ScrollViewer>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <AppBarButton x:Name="NewWindowButton" x:Uid="NewWindowButton" Click="NewWindowButton_Click" Label="[newwindow]">
+                                                        <AppBarButton.Icon>
+                                                            <FontIcon Glyph="&#xE78B;"/>
+                                                        </AppBarButton.Icon>
+                                                    </AppBarButton>
+                                                    <AppBarButton x:Name="AllTabsButton2" x:Uid="AllTabsButton" Click="AllTabsButton_Click" Label="[alltabs]">
+                                                        <AppBarButton.Icon>
+                                                            <FontIcon Glyph="&#xF5ED;" FontFamily="ms-appx:///Assets/segmdl2.ttf#Segoe MDL2 Assets"/>
+                                                        </AppBarButton.Icon>
+                                                    </AppBarButton>
+                                                    <AppBarButton x:Name="AddTabButton2" x:Uid="AddTabButton" Click="AddTabButton_Click" Label="[addtab]">
+                                                        <AppBarButton.Icon>
+                                                            <FontIcon Glyph="&#xE710;"/>
+                                                        </AppBarButton.Icon>
+                                                    </AppBarButton>
+                                                    <AppBarButton x:Name="CloseTabButton2" x:Uid="CloseTabButton" Click="CloseTabButton_Click" IsEnabled="False" Label="[closetab]">
+                                                        <AppBarButton.Icon>
+                                                            <FontIcon Glyph="&#xE711;"/>
+                                                        </AppBarButton.Icon>
+                                                    </AppBarButton>
+                                                </StackPanel>
+                                                <MenuFlyoutSeparator x:Name="TabsSeparator2"/>
+                                                <AppBarButton x:Name="EditButton2" x:Uid="EditButton" Style="{StaticResource RightAlignAppBarButton}" Click="EditButton_Click" Label="[edit]">
                                                     <AppBarButton.Icon>
-                                                        <FontIcon Glyph="&#xE78B;"/>
+                                                        <FontIcon Glyph="&#xE70F;"/>
                                                     </AppBarButton.Icon>
                                                 </AppBarButton>
-                                                <AppBarButton x:Name="AllTabsButton2" x:Uid="AllTabsButton" Click="AllTabsButton_Click" Label="[alltabs]">
+                                                <AppBarButton x:Name="UndoButton" x:Uid="UndoButton" IsEnabled="False" Style="{StaticResource RightAlignAppBarButton}" Click="UndoButton_Click" Label="[undo]">
                                                     <AppBarButton.Icon>
-                                                        <FontIcon Glyph="&#xF5ED;" FontFamily="ms-appx:///Assets/segmdl2.ttf#Segoe MDL2 Assets"/>
+                                                        <FontIcon Glyph="&#xE7A7;"/>
                                                     </AppBarButton.Icon>
                                                 </AppBarButton>
-                                                <AppBarButton x:Name="AddTabButton2" x:Uid="AddTabButton" Click="AddTabButton_Click" Label="[addtab]">
+                                                <AppBarButton x:Name="RedoButton" x:Uid="RedoButton" IsEnabled="False" Style="{StaticResource RightAlignAppBarButton}" Click="RedoButton_Click" Label="[redo]">
                                                     <AppBarButton.Icon>
-                                                        <FontIcon Glyph="&#xE710;"/>
+                                                        <FontIcon Glyph="&#xE7A6;"/>
                                                     </AppBarButton.Icon>
                                                 </AppBarButton>
-                                                <AppBarButton x:Name="CloseTabButton2" x:Uid="CloseTabButton" Click="CloseTabButton_Click" IsEnabled="False" Label="[closetab]">
+                                                <AppBarButton x:Name="InsertButton" x:Uid="InsertButton" Style="{StaticResource RightAlignAppBarButton}" Click="InsertButton_Click" Label="[insert]">
                                                     <AppBarButton.Icon>
-                                                        <FontIcon Glyph="&#xE711;"/>
+                                                        <FontIcon Glyph="&#xE896;"/>
+                                                    </AppBarButton.Icon>
+                                                    <MenuFlyout x:Name="InsertSelection">
+                                                        <MenuFlyoutItem x:Name="TabItem" x:Uid="TabItem" Click="TabItem_Click" Text="[tab]" />
+                                                        <MenuFlyoutItem x:Name="DateAndTimeItem" x:Uid="DateAndTimeItem" Click="DateAndTimeItem_Click" Text="[datentime]" />
+                                                        <MenuFlyoutItem x:Name="FileNameItem" x:Uid="FileNameItem" IsEnabled="False" Click="FileNameItem_Click" Text="[filename]" />
+                                                        <MenuFlyoutItem x:Name="FilePathItem" x:Uid="FilePathItem" IsEnabled="False" Click="FilePathItem_Click" Text="[filepath]" />
+                                                    </MenuFlyout>
+                                                </AppBarButton>
+                                                <MenuFlyoutSeparator/>
+                                                <AppBarButton x:Name="FindButton" x:Uid="FindButton" Style="{StaticResource RightAlignAppBarButton}" Click="FindButton_Click" Label="[find]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE721;"/>
+                                                    </AppBarButton.Icon>
+                                                    <Flyout x:Name="FindFlyout" Opened="FindFlyout_Opened">
+                                                        <Grid x:Name="FindGrid">
+                                                            <StackPanel x:Name="FindPanel" Padding="4">
+                                                                    <AutoSuggestBox x:Name="FindAutoSuggestBox" x:Uid="FindAutoSuggestBox" QuerySubmitted="FindAutoSuggestBox_QuerySubmitted" MinWidth="280" PlaceholderText="[findtxt]">
+                                                                        <AutoSuggestBox.QueryIcon>
+                                                                            <FontIcon Glyph="&#xE721;"/>
+                                                                        </AutoSuggestBox.QueryIcon>
+                                                                    </AutoSuggestBox>
+                                                                    <CheckBox x:Name="MatchCaseFindCheckBox" x:Uid="MatchCaseCheckBox" Content="[matchcase]" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Flyout>
+                                                </AppBarButton>
+                                                <AppBarButton x:Name="ReplaceButton" x:Uid="ReplaceButton" Style="{StaticResource RightAlignAppBarButton}" Click="ReplaceButton_Click" Label="[replace]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE8AB;"/>
+                                                    </AppBarButton.Icon>
+                                                    <Flyout x:Name="ReplaceFlyout" Opened="ReplaceFlyout_Opened">
+                                                        <Grid x:Name="ReplaceGrid">
+                                                            <StackPanel x:Name="ReplacePanel" Padding="4">
+                                                                    <AutoSuggestBox x:Name="WhatAutoSuggestBox" x:Uid="WhatAutoSuggestBox" MinWidth="280" QuerySubmitted="WhatAutoSuggestBox_QuerySubmitted" PlaceholderText="[findwht]">
+                                                                        <AutoSuggestBox.QueryIcon>
+                                                                            <FontIcon Glyph="&#xE72A;"/>
+                                                                        </AutoSuggestBox.QueryIcon>
+                                                                    </AutoSuggestBox>
+                                                                    <AutoSuggestBox x:Name="WithAutoSuggestBox" x:Uid="WithAutoSuggestBox" MinWidth="280" QuerySubmitted="WithAutoSuggestBox_QuerySubmitted" PlaceholderText="[replacewith]">
+                                                                        <AutoSuggestBox.QueryIcon>
+                                                                            <FontIcon Glyph="&#xE8AB;"/>
+                                                                        </AutoSuggestBox.QueryIcon>
+                                                                    </AutoSuggestBox>
+                                                                    <CheckBox x:Name="MatchCaseReplaceCheckBox" x:Uid="MatchCaseCheckBox" Content="[matchcase]" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Flyout>
+                                                </AppBarButton>
+                                                <MenuFlyoutSeparator/>
+                                                <AppBarButton x:Name="FormatButton" x:Uid="FormatButton" Style="{StaticResource RightAlignAppBarButton}" Click="FormatButton_Click" Label="[format]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE7C3;"/>
+                                                    </AppBarButton.Icon>
+                                                    <MenuFlyout x:Name="FormatSelection">
+                                                        <MenuFlyoutSubItem x:Name="SpaceOperationsItem" x:Uid="SpaceOperationsItem" Text="[spaceops]">
+                                                            <MenuFlyoutItem x:Name="TrimLeadingSpaceItem" x:Uid="TrimLeadingSpaceItem" Click="TrimLeadingSpaceItem_Click" Text="[trimleadspace]"/>
+                                                            <MenuFlyoutItem x:Name="TrimTrailingSpaceItem" x:Uid="TrimTrailingSpaceItem" Click="TrimTrailingSpaceItem_Click" Text="[trimtrailspace]"/>
+                                                            <MenuFlyoutItem x:Name="TrimLeadingnTrailingSpaceItem" x:Uid="TrimLeadingnTrailingSpaceItem" Click="TrimLeadingnTrailingSpaceItem_Click" Text="[trimleadntrailspace]"/>
+                                                        </MenuFlyoutSubItem>
+                                                        <ToggleMenuFlyoutItem x:Name="WordWrapItem" x:Uid="WordWrapItem" Click="WordWrapItem_Click" Text="[wordwrap]" IsChecked="True"/>
+                                                    </MenuFlyout>
+                                                </AppBarButton>
+                                                <MenuFlyoutSeparator/>
+                                                <AppBarButton x:Name="SaveAsButton" x:Uid="SaveAsButton" Style="{StaticResource RightAlignAppBarButton}" Click="SaveAsButton_Click" Label="[saveas]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE792;"/>
+                                                    </AppBarButton.Icon>
+                                                </AppBarButton>
+                                                <AppBarButton x:Name="SaveAllButton" x:Uid="SaveAllButton" Style="{StaticResource RightAlignAppBarButton}" Click="SaveAllButton_Click" Label="[saveall]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xEA35;"/>
+                                                    </AppBarButton.Icon>
+                                                </AppBarButton>
+                                                <AppBarToggleButton x:Name="AutoSaveToggle" x:Uid="AutoSaveToggle" Style="{StaticResource RightAlignAppBarToggle}" Label="[autosave]" Checked="AutoSaveToggle_Checked" Unchecked="AutoSaveToggle_Unchecked"/>
+                                                <MenuFlyoutSeparator Visibility="Collapsed"/>
+                                                <AppBarButton x:Name="RecentFilesButton" x:Uid="RecentFilesButton" Visibility="Collapsed" Style="{StaticResource RightAlignAppBarButton}" Click="RecentFilesButton_Click" Label="[recentfiles]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE823;"/>
+                                                    </AppBarButton.Icon>
+                                                    <MenuFlyout x:Name="RecentFilesFlyout" Opening="RecentFilesFlyout_Opening"/>
+                                                </AppBarButton>
+                                                <MenuFlyoutSeparator/>
+                                                <AppBarButton x:Name="PrintButton" x:Uid="PrintButton" Style="{StaticResource RightAlignAppBarButton}" Click="PrintButton_Click" Label="[print]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE749;"/>
+                                                    </AppBarButton.Icon>
+                                                </AppBarButton>
+                                                <AppBarButton x:Name="ShareButton" x:Uid="ShareButton" Style="{StaticResource RightAlignAppBarButton}" Click="ShareButton_Click" Label="[share]" >
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE72D;"/>
+                                                    </AppBarButton.Icon>
+                                                </AppBarButton>
+                                                <MenuFlyoutSeparator/>
+                                                <AppBarButton x:Name="LaunchButton" x:Uid="LaunchButton" Style="{StaticResource RightAlignAppBarButton}" Click="LaunchButton_Click" IsEnabled="False" Label="[launch]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE768;"/>
+                                                    </AppBarButton.Icon>
+                                                </AppBarButton>
+                                                <MenuFlyoutSeparator/>
+                                                <Grid Height="{ThemeResource MenuFlyoutThemeMinHeight}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="128"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="46"/>
+                                                        <ColumnDefinition Width="38"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock x:Name="ZoomTextBlock" x:Uid="ZoomTextBlock" Text="[zoom]" Grid.Column="0" Padding="2,8,0,0" FontSize="12" HorizontalAlignment="Left" />
+                                                    <AppBarButton x:Name="ZoomOutButton" x:Uid="ZoomOutButton" Style="{StaticResource RightAlignAppBarButton}" Grid.Column="1" Width="22" Click="ZoomOutButton_Click" Label="[zoomout]">
+                                                        <AppBarButton.Icon>
+                                                            <FontIcon Glyph="&#xE738;"/>
+                                                        </AppBarButton.Icon>
+                                                    </AppBarButton>
+                                                    <TextBlock x:Name="ZoomPercentTextBlock" Grid.Column="2" Padding="0,8,0,0" FontSize="12" HorizontalAlignment="Center"/>
+                                                    <AppBarButton x:Name="ZoomInButton" x:Uid="ZoomInButton" Style="{StaticResource RightAlignAppBarButton}" Grid.Column="3" Width="22" Click="ZoomInButton_Click" Label="[zoomin]">
+                                                        <AppBarButton.Icon>
+                                                            <FontIcon Glyph="&#xE710;"/>
+                                                        </AppBarButton.Icon>
+                                                    </AppBarButton>
+                                                    <AppBarButton x:Name="FullScreenButton" x:Uid="FullScreenButton" Style="{StaticResource RightAlignAppBarButton}" Grid.Column="4" Width="22" Click="FullScreenButton_Click" Label="[fullscreen]">
+                                                        <AppBarButton.Icon>
+                                                            <FontIcon Glyph="&#xE740;"/>
+                                                        </AppBarButton.Icon>
+                                                    </AppBarButton>
+                                                </Grid>
+                                                <MenuFlyoutSeparator/>
+                                                <AppBarButton x:Name="SettingsButton" x:Uid="SettingsButton" Style="{StaticResource RightAlignAppBarButton}" Click="SettingsButton_Click" Label="[settings]">
+                                                    <AppBarButton.Icon>
+                                                        <FontIcon Glyph="&#xE713;"/>
                                                     </AppBarButton.Icon>
                                                 </AppBarButton>
                                             </StackPanel>
-                                            <MenuFlyoutSeparator x:Name="TabsSeparator2"/>
-                                            <AppBarButton x:Name="EditButton2" x:Uid="EditButton" Style="{StaticResource RightAlignAppBarButton}" Click="EditButton_Click" Label="[edit]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE70F;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <AppBarButton x:Name="UndoButton" x:Uid="UndoButton" IsEnabled="False" Style="{StaticResource RightAlignAppBarButton}" Click="UndoButton_Click" Label="[undo]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE7A7;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <AppBarButton x:Name="RedoButton" x:Uid="RedoButton" IsEnabled="False" Style="{StaticResource RightAlignAppBarButton}" Click="RedoButton_Click" Label="[redo]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE7A6;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <AppBarButton x:Name="InsertButton" x:Uid="InsertButton" Style="{StaticResource RightAlignAppBarButton}" Click="InsertButton_Click" Label="[insert]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE896;"/>
-                                                </AppBarButton.Icon>
-                                                <MenuFlyout x:Name="InsertSelection">
-                                                    <MenuFlyoutItem x:Name="TabItem" x:Uid="TabItem" Click="TabItem_Click" Text="[tab]" />
-                                                    <MenuFlyoutItem x:Name="DateAndTimeItem" x:Uid="DateAndTimeItem" Click="DateAndTimeItem_Click" Text="[datentime]" />
-                                                    <MenuFlyoutItem x:Name="FileNameItem" x:Uid="FileNameItem" IsEnabled="False" Click="FileNameItem_Click" Text="File Name" />
-                                                    <MenuFlyoutItem x:Name="FilePathItem" x:Uid="FilePathItem" IsEnabled="False" Text="File Path" Click="FilePathItem_Click" />
-                                                </MenuFlyout>
-                                            </AppBarButton>
-                                            <MenuFlyoutSeparator/>
-                                            <AppBarButton x:Name="FindButton" x:Uid="FindButton" Style="{StaticResource RightAlignAppBarButton}" Click="FindButton_Click" Label="[find]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE721;"/>
-                                                </AppBarButton.Icon>
-                                                <Flyout x:Name="FindFlyout" Opened="FindFlyout_Opened">
-                                                    <Flyout.FlyoutPresenterStyle>
-                                                        <Style TargetType="FlyoutPresenter">
-                                                            <Setter Property="ScrollViewer.HorizontalScrollMode"
-                                                                Value="Disabled"/>
-                                                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                                                            <Setter Property="IsTabStop" Value="True"/>
-                                                            <Setter Property="TabNavigation" Value="Cycle"/>
-                                                        </Style>
-                                                    </Flyout.FlyoutPresenterStyle>
-                                                    <StackPanel>
-                                                        <AutoSuggestBox x:Name="FindAutoSuggestBox" x:Uid="FindAutoSuggestBox" QuerySubmitted="FindAutoSuggestBox_QuerySubmitted" MinWidth="280" PlaceholderText="[findtxt]">
-                                                            <AutoSuggestBox.QueryIcon>
-                                                                <FontIcon Glyph="&#xE721;"/>
-                                                            </AutoSuggestBox.QueryIcon>
-                                                        </AutoSuggestBox>
-                                                        <CheckBox x:Name="MatchCaseFindCheckBox" x:Uid="MatchCaseCheckBox" Content="[matchcase]" />
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </AppBarButton>
-                                            <AppBarButton x:Name="ReplaceButton" x:Uid="ReplaceButton" Style="{StaticResource RightAlignAppBarButton}" Click="ReplaceButton_Click" Label="[replace]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE8AB;"/>
-                                                </AppBarButton.Icon>
-                                                <Flyout x:Name="ReplaceFlyout" Opened="ReplaceFlyout_Opened">
-                                                    <Flyout.FlyoutPresenterStyle>
-                                                        <Style TargetType="FlyoutPresenter">
-                                                            <Setter Property="ScrollViewer.HorizontalScrollMode"
-                                                                Value="Disabled"/>
-                                                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-                                                            <Setter Property="IsTabStop" Value="True"/>
-                                                            <Setter Property="TabNavigation" Value="Cycle"/>
-                                                        </Style>
-                                                    </Flyout.FlyoutPresenterStyle>
-                                                    <StackPanel>
-                                                        <AutoSuggestBox x:Name="WhatAutoSuggestBox" x:Uid="WhatAutoSuggestBox" MinWidth="280" QuerySubmitted="WhatAutoSuggestBox_QuerySubmitted" PlaceholderText="[findwht]">
-                                                            <AutoSuggestBox.QueryIcon>
-                                                                <FontIcon Glyph="&#xE72A;"/>
-                                                            </AutoSuggestBox.QueryIcon>
-                                                        </AutoSuggestBox>
-                                                        <AutoSuggestBox x:Name="WithAutoSuggestBox" x:Uid="WithAutoSuggestBox" MinWidth="280" QuerySubmitted="WithAutoSuggestBox_QuerySubmitted" PlaceholderText="[replacewith]">
-                                                            <AutoSuggestBox.QueryIcon>
-                                                                <FontIcon Glyph="&#xE8AB;"/>
-                                                            </AutoSuggestBox.QueryIcon>
-                                                        </AutoSuggestBox>
-                                                        <CheckBox x:Name="MatchCaseReplaceCheckBox" x:Uid="MatchCaseCheckBox" Content="[matchcase]" />
-                                                    </StackPanel>
-                                                </Flyout>
-                                            </AppBarButton>
-                                            <MenuFlyoutSeparator/>
-                                            <AppBarButton x:Name="FormatButton" x:Uid="FormatButton" Style="{StaticResource RightAlignAppBarButton}" Click="FormatButton_Click" Label="[format]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE7C3;"/>
-                                                </AppBarButton.Icon>
-                                                <MenuFlyout x:Name="FormatSelection">
-                                                    <MenuFlyoutSubItem x:Name="SpaceOperationsItem" x:Uid="SpaceOperationsItem" Text="Space Operations">
-                                                        <MenuFlyoutItem x:Name="TrimLeadingSpaceItem" x:Uid="TrimLeadingSpaceItem" Click="TrimLeadingSpaceItem_Click" Text="Trim Leading Space"/>
-                                                        <MenuFlyoutItem x:Name="TrimTrailingSpaceItem" x:Uid="TrimTrailingSpaceItem" Click="TrimTrailingSpaceItem_Click" Text="Trim Trailing Space"/>
-                                                        <MenuFlyoutItem x:Name="TrimLeadingnTrailingSpaceItem" x:Uid="TrimTrailingSpaceItem" Click="TrimLeadingnTrailingSpaceItem_Click" Text="Trim Leading and Trailing Space"/>
-                                                    </MenuFlyoutSubItem>
-                                                    <ToggleMenuFlyoutItem x:Name="WordWrapItem" x:Uid="WordWrapItem" Click="WordWrapItem_Click" Text="[wordwrap]" IsChecked="True"/>
-                                                </MenuFlyout>
-                                            </AppBarButton>
-                                            <MenuFlyoutSeparator/>
-                                            <AppBarButton x:Name="SaveAsButton" x:Uid="SaveAsButton" Style="{StaticResource RightAlignAppBarButton}" Click="SaveAsButton_Click" Label="[saveas]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE792;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <AppBarButton x:Name="SaveAllButton" x:Uid="SaveAllButton" Style="{StaticResource RightAlignAppBarButton}" Click="SaveAllButton_Click" Label="[saveall]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xEA35;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <AppBarToggleButton x:Name="AutoSaveToggle" x:Uid="AutoSaveToggle" Style="{StaticResource RightAlignAppBarToggle}" Label="Auto Save" Checked="AutoSaveToggle_Checked" Unchecked="AutoSaveToggle_Unchecked"/>
-                                            <MenuFlyoutSeparator Visibility="Collapsed"/>
-                                            <AppBarButton x:Name="RecentFilesButton" x:Uid="RecentFilesButton" Visibility="Collapsed" Style="{StaticResource RightAlignAppBarButton}" Click="RecentFilesButton_Click" Label="[recentfiles]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE823;"/>
-                                                </AppBarButton.Icon>
-                                                <MenuFlyout x:Name="RecentFilesFlyout" Opening="RecentFilesFlyout_Opening"/>
-                                            </AppBarButton>
-                                            <MenuFlyoutSeparator/>
-                                            <AppBarButton x:Name="PrintButton" x:Uid="PrintButton" Style="{StaticResource RightAlignAppBarButton}" Click="PrintButton_Click" Label="[print]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE749;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <AppBarButton x:Name="ShareButton" x:Uid="ShareButton" Style="{StaticResource RightAlignAppBarButton}" Click="ShareButton_Click" Label="[share]" >
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE72D;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <MenuFlyoutSeparator/>
-                                            <AppBarButton x:Name="LaunchButton" x:Uid="LaunchButton" Style="{StaticResource RightAlignAppBarButton}" Click="LaunchButton_Click" IsEnabled="False" Label="[launch]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE768;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            <MenuFlyoutSeparator/>
-                                            <Grid Height="{ThemeResource MenuFlyoutThemeMinHeight}">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="128"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="46"/>
-                                                    <ColumnDefinition Width="38"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock x:Name="ZoomTextBlock" x:Uid="ZoomTextBlock" Text="[zoom]" Grid.Column="0" Padding="2,8,0,0" FontSize="12" HorizontalAlignment="Left" />
-                                                <AppBarButton x:Name="ZoomOutButton" x:Uid="ZoomOutButton" Style="{StaticResource RightAlignAppBarButton}" Grid.Column="1" Width="22" Click="ZoomOutButton_Click" Label="[zoomout]">
-                                                    <AppBarButton.Icon>
-                                                        <FontIcon Glyph="&#xE738;"/>
-                                                    </AppBarButton.Icon>
-                                                </AppBarButton>
-                                                <TextBlock x:Name="ZoomPercentTextBlock" Grid.Column="2" Padding="0,8,0,0" FontSize="12" HorizontalAlignment="Center"/>
-                                                <AppBarButton x:Name="ZoomInButton" x:Uid="ZoomInButton" Style="{StaticResource RightAlignAppBarButton}" Grid.Column="3" Width="22" Click="ZoomInButton_Click" Label="[zoomin]">
-                                                    <AppBarButton.Icon>
-                                                        <FontIcon Glyph="&#xE710;"/>
-                                                    </AppBarButton.Icon>
-                                                </AppBarButton>
-                                                <AppBarButton x:Name="FullScreenButton" x:Uid="FullScreenButton" Style="{StaticResource RightAlignAppBarButton}" Grid.Column="4" Width="22" Click="FullScreenButton_Click" Label="[fullscreen]">
-                                                    <AppBarButton.Icon>
-                                                        <FontIcon Glyph="&#xE740;"/>
-                                                    </AppBarButton.Icon>
-                                                </AppBarButton>
-                                            </Grid>
-                                            <MenuFlyoutSeparator/>
-                                            <AppBarButton x:Name="SettingsButton" x:Uid="SettingsButton" Style="{StaticResource RightAlignAppBarButton}" Click="SettingsButton_Click" Label="[settings]">
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xE713;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                        </StackPanel>
-                                    </ScrollViewer>
-                                </StackPanel>
+                                        </ScrollViewer>
+                                    </StackPanel>
+                                </Grid>
                             </Flyout>
                         </FlyoutBase.AttachedFlyout>
                     </local:TextieCommandBar>
+                    </Grid>
                 </local:RichEditBoxPivot.RightHeader>
             </local:RichEditBoxPivot>
         </Grid>

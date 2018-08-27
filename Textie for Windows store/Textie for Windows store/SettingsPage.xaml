@@ -146,8 +146,9 @@
                     </PivotItem.Header>
                     <StackPanel>
                         <TextBlock x:Name="ProgramVersionTextBlock" Text="[version]" />
+                        <TextBlock x:Name="ThanksTextBlock" Text="Thanks to Diederik Krols for UWP Composition BackDrop Control" />
                         <TextBlock x:Name="CopyrightTextBlock" Text="[copyright]" />
-                        <Button x:Name="feedbackButton" Content="Send feedback" Margin="0,4,0,0" Visibility="Collapsed" Click="feedbackButton_Click"/>
+                        <Button x:Name="FeedbackButton" x:Uid="FeedbackButton" Content="Send feedback" Margin="0,4,0,0" Visibility="Collapsed" Click="FeedbackButton_Click"/>
                     </StackPanel>
                 </PivotItem>
             </Pivot>

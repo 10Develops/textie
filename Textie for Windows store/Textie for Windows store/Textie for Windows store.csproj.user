@@ -9,19 +9,19 @@
     <DeployOptionalPackages>true</DeployOptionalPackages>
   </PropertyGroup>
   <PropertyGroup>
-    <Source>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</Source>
-    <SmallTileSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</SmallTileSource>
-    <MediumTileSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</MediumTileSource>
-    <WideTileSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</WideTileSource>
-    <LargeTileSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</LargeTileSource>
-    <AppIconSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</AppIconSource>
-    <SplashScreenSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</SplashScreenSource>
+    <Source>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</Source>
+    <SmallTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</SmallTileSource>
+    <MediumTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</MediumTileSource>
+    <WideTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</WideTileSource>
+    <LargeTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</LargeTileSource>
+    <AppIconSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</AppIconSource>
+    <SplashScreenSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</SplashScreenSource>
     <AppxPackageIsForStore>False</AppxPackageIsForStore>
     <AppxShowAllApps>False</AppxShowAllApps>
     <AppxBuildConfigurationSelection>x86|x64|arm</AppxBuildConfigurationSelection>
     <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
-    <BadgeLogoSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</BadgeLogoSource>
-    <PackageLogoSource>C:\Users\This\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Textie.png</PackageLogoSource>
+    <BadgeLogoSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</BadgeLogoSource>
+    <PackageLogoSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</PackageLogoSource>
     <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">

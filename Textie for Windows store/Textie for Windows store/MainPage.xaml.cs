@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using Windows.UI.Input;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.StartScreen;
+using XamlBrewer.Uwp.Controls;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x419
 
 namespace Textie_for_Windows_store
@@ -1265,6 +1266,50 @@ namespace Textie_for_Windows_store
 
         #endregion
 
+        #region "For tests"
+        private async void PinFileStartMenu_Click(object sender, RoutedEventArgs e)
+        {
+            //For tests
+            if (currentEditBox.Tag != null)
+            {
+                string tileId;
+
+                string path = ((StorageFile)currentEditBox.Tag).Path;
+                tileId = "file" + PivotMain.Items.Count;
+                var mycoll = colllaunch.coll;
+                mycoll.Add(tileId, path);
+                // Use a display name you like
+                string displayName;
+                if (PivotMain.SelectedRichEditBoxItem.HeaderTextBlock.Text.Length > 10
+                    && currentEditBox.Tag != null)
+                {
+                    displayName = ((StorageFile)currentEditBox.Tag).Name;
+                }
+                else
+                {
+                    displayName = PivotMain.SelectedRichEditBoxItem.HeaderTextBlock.Text;
+                }
+
+                // Provide all the required info in arguments so that when user
+                // clicks your tile, you can navigate them to the correct content
+                string arguments = tileId;
+
+                var imageUri = new Uri("ms-appx:///Assets/Square150x150Logo.scale-100.png");
+
+                // During creation of secondary tile, an application may set additional arguments on the tile that will be passed in during activation.
+
+                // Create a Secondary tile with all the required arguments.
+                var secondaryTile = new SecondaryTile(tileId,
+                    displayName,
+                    arguments,
+                    imageUri, TileSize.Default);
+                secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = true;
+
+                await secondaryTile.RequestCreateAsync();
+            }
+        }
+        #endregion
+
         #region "Print events"
         private void PrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs args)
         {
@@ -1327,6 +1372,7 @@ namespace Textie_for_Windows_store
             var newTab = PivotMain.AddTab();
             newTab.Name = "Tab" + PivotMain.Items.Count;
 
+            //Until Windows 10 version 1607 for context flyout works only Holding and RightTapped events 
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
             {
                 newTab.HeaderTextBlock.ContextFlyout = TabMenuFlyout;
@@ -1348,12 +1394,14 @@ namespace Textie_for_Windows_store
 
             newTab.Tag = newTab;
 
+            //Sets titlebar text
             var appView = ApplicationView.GetForCurrentView();
             appView.Title = Header;
 
             TitleTextBlock.Text = string.Format("{0} – {1}", appView.Title,
                 Package.Current.DisplayName);
 
+            //Adds items in all tabs list
             newTab.ListViewItem.Title = newTab.HeaderTextBlock.Text;
 
             dataList.Add(newTab.ListViewItem);
@@ -1362,6 +1410,7 @@ namespace Textie_for_Windows_store
 
             ToolTipService.SetToolTip(newTab.HeaderTextBlock, Header);
 
+            //Events
             currentEditBox.TextChanged += new RoutedEventHandler(currentEditBox_TextChanged);
             currentEditBox.SelectionChanged += new RoutedEventHandler(currentEditBox_SelectionChanged);
             currentEditBox.DoubleTapped += new DoubleTappedEventHandler(currentEditBox_DoubleTapped);
@@ -1381,6 +1430,7 @@ namespace Textie_for_Windows_store
 
         private void AddRecentFiles()
         {
+            //It is for testing, if delete some file from Recent Files list, this will be throw FileNotFoundException
             RecentFilesFlyout.Items.Clear();
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
             foreach (AccessListEntry entry in mru.Entries)
@@ -1418,6 +1468,7 @@ namespace Textie_for_Windows_store
                     newWindow.Content = frame;
                     newWindow.Activate();
 
+                    //Shows new window of same app
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(
                         newAppView.Id,
                         ViewSizePreference.UseMinimum,
@@ -1434,6 +1485,7 @@ namespace Textie_for_Windows_store
                 {
                     if (item.EditBox.Tag != null)
                     {
+                        //Shows message box when changes of file is not saved
                         ShowMessageBox("Save changes", "Do you want to save changes?",
                             (command) => 
                             {
@@ -1448,6 +1500,7 @@ namespace Textie_for_Windows_store
                     }
                     else
                     {
+                        //Shows message box when file is not saved
                         ShowMessageBox("Save file", "Do you want to save \"" +
                             item.HeaderTextBlock.Text +
                             "\"?",
@@ -1493,6 +1546,7 @@ namespace Textie_for_Windows_store
 
         private void ClearTabs()
         {
+            //Code will not working normally when add only one tab
             AddTab("");
             PivotMain.Items.Clear();
             dataList.Clear();
@@ -1501,6 +1555,10 @@ namespace Textie_for_Windows_store
 
         private async void OpenFile()
         {
+            /*
+             * On mobile when double click on open button or click on save button
+             * Will be throw exception, because of two async operations in same time
+            */
             OpenButton.IsEnabled = false;
             SaveButton.IsEnabled = false;
 
@@ -1511,17 +1569,24 @@ namespace Textie_for_Windows_store
             picker.FileTypeFilter.Add(".text");
             picker.FileTypeFilter.Add(".rtf");
             picker.FileTypeFilter.Add(".log");
+            picker.FileTypeFilter.Add(".ini");
+            picker.FileTypeFilter.Add(".reg");
             picker.FileTypeFilter.Add(".htm");
             picker.FileTypeFilter.Add(".html");
             picker.FileTypeFilter.Add(".js");
             picker.FileTypeFilter.Add(".css");
             picker.FileTypeFilter.Add(".xml");
-            picker.FileTypeFilter.Add(".d");
+            picker.FileTypeFilter.Add(".xaml");
+            picker.FileTypeFilter.Add(".php");
             picker.FileTypeFilter.Add(".c");
             picker.FileTypeFilter.Add(".cs");
             picker.FileTypeFilter.Add(".cpp");
             picker.FileTypeFilter.Add(".h");
+            picker.FileTypeFilter.Add(".d");
+            picker.FileTypeFilter.Add(".vb");
+            picker.FileTypeFilter.Add(".vbs");
 
+            //Shows picker
             IAsyncOperation<StorageFile> pickSingleFile = picker.PickSingleFileAsync();
             StorageFile file = await pickSingleFile;
 
@@ -1529,6 +1594,8 @@ namespace Textie_for_Windows_store
             if (file != null)
             {
                 string FileName = Path.GetFileName(file.Path);
+
+                //If tab has opened file, adds new tab
                 if (currentEditBox.Document.CanUndo())
                 {
                     AddTab(FileName);
@@ -1558,6 +1625,7 @@ namespace Textie_for_Windows_store
                 TitleTextBlock.Text = string.Format("{0} – {1}", appView.Title,
                     Package.Current.DisplayName);
 
+                //If file format is RTF, then sets RTF format text in text box, else sets plain text
                 string textToOpen = await FileIO.ReadTextAsync(file);
                 if (file.Path.EndsWith(".rtf"))
                 {
@@ -1568,13 +1636,16 @@ namespace Textie_for_Windows_store
                     currentEditBox.Text = textToOpen;
                 }
 
+                //Creates copy of file in local folder
                 StorageFile copiedFile = await localFolder.CreateFileAsync(FileName, 
                     CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(copiedFile, textToOpen);
 
+                //For tests, adds item in Recent Files (MRU) list
                 var mru = StorageApplicationPermissions.MostRecentlyUsedList;
                 string mruToken = mru.Add(file, copiedFile.Path, RecentStorageItemVisibility.AppAndSystem);
 
+                //If format of file is HTM or HTML, enables launch button
                 LaunchButton.IsEnabled = false;
 
                 if (file.Path.EndsWith(".html") ||
@@ -1737,15 +1808,19 @@ namespace Textie_for_Windows_store
             picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             picker.FileTypeChoices.Add("Text Files", new string[] { ".txt", ".text" });
             picker.FileTypeChoices.Add("RTF File", new string[] { ".rtf" });
-            picker.FileTypeChoices.Add("Log File", new string[] { ".log"});
+            picker.FileTypeChoices.Add("Log File", new string[] { ".log" });
+            picker.FileTypeChoices.Add("INI file", new string[] { ".ini" });
+            picker.FileTypeChoices.Add("REG file", new string[] { ".reg" });
             picker.FileTypeChoices.Add("HTML Files", new string[] { ".htm", ".html" });
             picker.FileTypeChoices.Add("CSS File", new string[] { ".css" });
             picker.FileTypeChoices.Add("JavaScript File", new string[] { ".js" });
-            picker.FileTypeChoices.Add("XML File", new string[] { ".xml" });
-            picker.FileTypeChoices.Add("D source file", new string[] { ".d" });
+            picker.FileTypeChoices.Add("XML Files", new string[] { ".xml", ".xaml" });
+            picker.FileTypeChoices.Add("PHP File", new string[] { ".php" });
             picker.FileTypeChoices.Add("C source file", new string[] { ".c" });
             picker.FileTypeChoices.Add("C# source file", new string[] { ".cs" });
             picker.FileTypeChoices.Add("C++ source files", new string[] { ".cpp", ".h" });
+            picker.FileTypeChoices.Add("D source file", new string[] { ".d" });
+            picker.FileTypeChoices.Add("VB source files", new string[] { ".vb", ".vbs" });
             picker.FileTypeChoices.Add("All files", new string[] { "." });
             picker.SuggestedFileName = "New File " + PivotMain.Items.Count;
 
@@ -1794,6 +1869,7 @@ namespace Textie_for_Windows_store
                 var mru = StorageApplicationPermissions.MostRecentlyUsedList;
                 string mruToken = mru.Add(file, copiedFile.Path, RecentStorageItemVisibility.AppAndSystem);
 
+                //If file format is RTF, then writes text box text on RTF format, else writes on plain text
                 string textToRefresh = await FileIO.ReadTextAsync(file);
                 if (file.Path.EndsWith(".rtf"))
                 {
@@ -2142,6 +2218,7 @@ namespace Textie_for_Windows_store
         #region "Key Accelerators"
         private void MakeKeyAccelerators()
         {
+            //Windows.UI.Xaml.Input.KeyboardAccelerator is introduced in Windows 10 version 1709
             if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Input.KeyboardAccelerator"))
             {
                 KeyboardAccelerator CtrlT = new KeyboardAccelerator();
@@ -2211,17 +2288,23 @@ namespace Textie_for_Windows_store
 
             if (titleBarColor == "0")
             {
-                //AppTitleBar.Background = BasicBackBrush;
+                AppTitleBar.Background = BasicBackBrush;
             }
             else
             {
                 BasicAccentBrush();
             }
 
-            //ContentGrid.Background = BasicBackBrush;
+            Style FlyoutStyle = new Style { TargetType = typeof(FlyoutPresenter) };
+
+            FlyoutStyle.Setters.Add(new Setter(PaddingProperty,
+                1));
+            FlyoutStyle.Setters.Add(new Setter(RequestedThemeProperty,
+                MainGrid.RequestedTheme));
 
             if (theme == "WD")
             {
+                //Adds reveal highlight
                 if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.RevealBrush"))
                 {
                     var AppBarButtonReveal =
@@ -2264,6 +2347,54 @@ namespace Textie_for_Windows_store
                     SettingsButton.Style = AppBarButtonOverflowReveal;
                 }
 
+                //Adds transparency on flyouts
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
+                {
+                    AcrylicBackdrop commandrBarBackDrop = new AcrylicBackdrop();
+
+                    AcrylicBackdrop allTabsBackDrop = new AcrylicBackdrop();
+
+                    AcrylicBackdrop secondaryCommandsBackDrop = new AcrylicBackdrop();
+
+                    AcrylicBackdrop findBackDrop = new AcrylicBackdrop();
+
+                    AcrylicBackdrop replaceBackDrop = new AcrylicBackdrop();
+
+                    string TransparencyBool = localSettings.Values["transparency"].ToString();
+                    if (TransparencyBool == "1")
+                    {
+                        Style AcrylicCommandBarStyle = new Style { TargetType = typeof(CommandBar) };
+                        AcrylicCommandBarStyle.Setters.Add(new Setter(BackgroundProperty,
+                            Colors.Transparent));
+
+                        MainCommandBar.Style = AcrylicCommandBarStyle;
+
+                        MainCommandBarGrid.Children.Clear();
+                        MainCommandBarGrid.Children.Add(commandrBarBackDrop);
+                        MainCommandBarGrid.Children.Add(MainCommandBar);
+
+                        FlyoutStyle.Setters.Add(new Setter(BackgroundProperty,
+                            Colors.Transparent));
+
+                        AllTabsGrid.Children.Clear();
+                        AllTabsGrid.Children.Add(allTabsBackDrop);
+                        AllTabsGrid.Children.Add(AllTabsPanel);
+
+                        SecondaryCommandsGrid.Children.Clear();
+                        SecondaryCommandsGrid.Children.Add(secondaryCommandsBackDrop);
+                        SecondaryCommandsGrid.Children.Add(SecondaryCommandsPanel);
+
+                        FindGrid.Children.Clear();
+                        FindGrid.Children.Add(findBackDrop);
+                        FindGrid.Children.Add(FindPanel);
+
+                        ReplaceGrid.Children.Clear();
+                        ReplaceGrid.Children.Add(replaceBackDrop);
+                        ReplaceGrid.Children.Add(ReplacePanel);
+                    }
+                }
+
+                //Adds acrylic brush on window
                 if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
                 {
                     var AcrylicSystemBrush =
@@ -2284,40 +2415,31 @@ namespace Textie_for_Windows_store
                         titleBar.BackgroundColor = Resources["SystemAccentColor"] as Color?;
                         AppTitleBar.RequestedTheme = ElementTheme.Dark;
                         AppTitleBar.Background =
-                        Resources["SystemControlAccentAcrylicWindowAccentMediumHighBrush"] as AcrylicBrush;
+                            Resources["SystemControlAccentAcrylicWindowAccentMediumHighBrush"] as AcrylicBrush;
                     }
 
                     string TransparencyBool = localSettings.Values["transparency"].ToString();
                     if (TransparencyBool == "1")
                     {
                         ContentGrid.Background = AcrylicSystemBrush;
-
-                        MainCommandBar.Background = AcrylicElementBrush;
-
-                        Style AcrylicFlyoutStyle = new Style { TargetType = typeof(FlyoutPresenter) };
-
-                        AcrylicFlyoutStyle.Setters.Add(new Setter(BackgroundProperty,
-                            AcrylicElementBrush));
-                        AcrylicFlyoutStyle.Setters.Add(new Setter(RequestedThemeProperty,
-                            MainGrid.RequestedTheme));
-
-                        AllTabsFlyout.FlyoutPresenterStyle = AcrylicFlyoutStyle;
-                        SecondaryCommands.FlyoutPresenterStyle = AcrylicFlyoutStyle;
-                        FindFlyout.FlyoutPresenterStyle = AcrylicFlyoutStyle;
-                        ReplaceFlyout.FlyoutPresenterStyle = AcrylicFlyoutStyle;
-
-                        Style AcrylicMenuFlyoutStyle = new Style { TargetType = typeof(MenuFlyoutPresenter) };
-
-                        AcrylicMenuFlyoutStyle.Setters.Add(new Setter(BackgroundProperty,
-                            AcrylicElementBrush));
-                        AcrylicMenuFlyoutStyle.Setters.Add(new Setter(RequestedThemeProperty,
-                            MainGrid.RequestedTheme));
-
-                        InsertSelection.MenuFlyoutPresenterStyle = AcrylicMenuFlyoutStyle;
-                        FormatSelection.MenuFlyoutPresenterStyle = AcrylicMenuFlyoutStyle;
                     }
+
+                    Style AcrylicMenuFlyoutStyle = new Style { TargetType = typeof(MenuFlyoutPresenter) };
+
+                    AcrylicMenuFlyoutStyle.Setters.Add(new Setter(BackgroundProperty,
+                        AcrylicElementBrush));
+                    AcrylicMenuFlyoutStyle.Setters.Add(new Setter(RequestedThemeProperty,
+                        MainGrid.RequestedTheme));
+
+                    InsertSelection.MenuFlyoutPresenterStyle = AcrylicMenuFlyoutStyle;
+                    FormatSelection.MenuFlyoutPresenterStyle = AcrylicMenuFlyoutStyle;
                 }
             }
+
+            AllTabsFlyout.FlyoutPresenterStyle = FlyoutStyle;
+            SecondaryCommands.FlyoutPresenterStyle = FlyoutStyle;
+            FindFlyout.FlyoutPresenterStyle = FlyoutStyle;
+            ReplaceFlyout.FlyoutPresenterStyle = FlyoutStyle;
         }
 
         private void BasicAccentBrush()
@@ -2330,46 +2452,5 @@ namespace Textie_for_Windows_store
             AppTitleBar.Background = Resources["SystemControlBackgroundAccentBrush"] as Brush;
         }
         #endregion
-
-        private async void PinFileStartMenu_Click(object sender, RoutedEventArgs e)
-        {
-            if(currentEditBox.Tag != null)
-            {
-                string tileId;
-
-                string path = ((StorageFile)currentEditBox.Tag).Path;
-                tileId = "file" + PivotMain.Items.Count;
-                var mycoll = colllaunch.coll;
-                mycoll.Add(tileId, path);
-                // Use a display name you like
-                string displayName;
-                if (PivotMain.SelectedRichEditBoxItem.HeaderTextBlock.Text.Length > 10
-                    && currentEditBox.Tag != null)
-                {
-                    displayName = ((StorageFile)currentEditBox.Tag).Name;
-                }
-                else
-                {
-                    displayName = PivotMain.SelectedRichEditBoxItem.HeaderTextBlock.Text;
-                }
-
-                // Provide all the required info in arguments so that when user
-                // clicks your tile, you can navigate them to the correct content
-                string arguments = tileId;
-
-                var imageUri = new Uri("ms-appx:///Assets/Square150x150Logo.scale-100.png");
-
-                // During creation of secondary tile, an application may set additional arguments on the tile that will be passed in during activation.
-
-                // Create a Secondary tile with all the required arguments.
-                var secondaryTile = new SecondaryTile(tileId,
-                    displayName,
-                    arguments,
-                    imageUri, TileSize.Default);
-                secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = true;
-
-                await secondaryTile.RequestCreateAsync();
-            }
-        }
     }
 }

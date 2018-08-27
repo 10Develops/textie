@@ -4,11 +4,5 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Textie_for_Windows_store">
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="FluentDesignSystem/ResourceDictionarys/Styles.xaml" />
-                <ResourceDictionary Source="FluentDesignSystem/ResourceDictionarys/ThemeResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
     </Application.Resources>
 </Application>

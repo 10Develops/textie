@@ -141,6 +141,9 @@
   <data name="AppThemeTextBlock.Text" xml:space="preserve">
     <value>Հավելման ոճ</value>
   </data>
+  <data name="AutoSaveToggle.Label" xml:space="preserve">
+    <value>Ինքնապահպանում</value>
+  </data>
   <data name="CloseAllTabsItem.Text" xml:space="preserve">
     <value>Մաքրել ներդիրները</value>
   </data>
@@ -176,6 +179,15 @@
   </data>
   <data name="EditToolTip" xml:space="preserve">
     <value>Խմբագրել</value>
+  </data>
+  <data name="FeedbackButton.Content" xml:space="preserve">
+    <value>Ուղարկել կարծիք</value>
+  </data>
+  <data name="FileNameItem.Text" xml:space="preserve">
+    <value>Ֆայլի անունը</value>
+  </data>
+  <data name="FilePathItem.Text" xml:space="preserve">
+    <value>Ֆայլի ուղին</value>
   </data>
   <data name="FindAutoSuggestBox.PlaceholderText" xml:space="preserve">
     <value>Փնտրել տեքստ</value>
@@ -252,6 +264,9 @@
   <data name="SaveButton.Label" xml:space="preserve">
     <value>Պահպանել</value>
   </data>
+  <data name="SaveFileMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Պահպանել ֆայլը</value>
+  </data>
   <data name="SaveToolTip" xml:space="preserve">
     <value>Պահպանել</value>
   </data>
@@ -269,6 +284,9 @@
   </data>
   <data name="ShareButton.Label" xml:space="preserve">
     <value>Կիսվել</value>
+  </data>
+  <data name="SpaceOperationsItem.Text" xml:space="preserve">
+    <value>Գործողություններ բացատներով</value>
   </data>
   <data name="TabItem.Text" xml:space="preserve">
     <value>Սյունատ</value>
@@ -288,6 +306,15 @@
   <data name="TransparencyToggleSwitch.Header" xml:space="preserve">
     <value>Թափանցիկության էֆեկտներ 
 բովանդակությունում</value>
+  </data>
+  <data name="TrimLeadingnTrailingSpaceItem.Text" xml:space="preserve">
+    <value>Հեռացնել տողասկզբի և տողավերջի բացատները</value>
+  </data>
+  <data name="TrimLeadingSpaceItem.Text" xml:space="preserve">
+    <value>Հեռացնել տողասկզբի բացատները</value>
+  </data>
+  <data name="TrimTrailingSpaceItem.Text" xml:space="preserve">
+    <value>Հեռացնել տողավերջի բացատները</value>
   </data>
   <data name="UndoButton.Label" xml:space="preserve">
     <value>Հետարկել</value>

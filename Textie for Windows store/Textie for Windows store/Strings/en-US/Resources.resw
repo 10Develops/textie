@@ -141,6 +141,9 @@
   <data name="AppThemeTextBlock.Text" xml:space="preserve">
     <value>App Theme</value>
   </data>
+  <data name="AutoSaveToggle.Label" xml:space="preserve">
+    <value>Auto Save</value>
+  </data>
   <data name="CloseAllTabsItem.Text" xml:space="preserve">
     <value>Clear tabs</value>
   </data>
@@ -176,6 +179,15 @@
   </data>
   <data name="EditToolTip" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="FeedbackButton.Content" xml:space="preserve">
+    <value>Send feedback</value>
+  </data>
+  <data name="FileNameItem.Text" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="FilePathItem.Text" xml:space="preserve">
+    <value>File Path</value>
   </data>
   <data name="FindAutoSuggestBox.PlaceholderText" xml:space="preserve">
     <value>Find Text</value>
@@ -252,6 +264,9 @@
   <data name="SaveButton.Label" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="SaveFileMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Save file</value>
+  </data>
   <data name="SaveToolTip" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -270,6 +285,9 @@
   <data name="ShareButton.Label" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="SpaceOperationsItem.Text" xml:space="preserve">
+    <value>Space Operations</value>
+  </data>
   <data name="TabItem.Text" xml:space="preserve">
     <value>Tab</value>
   </data>
@@ -287,6 +305,15 @@
   </data>
   <data name="TransparencyToggleSwitch.Header" xml:space="preserve">
     <value>Transparency effects in content</value>
+  </data>
+  <data name="TrimLeadingnTrailingSpaceItem.Text" xml:space="preserve">
+    <value>Trim Leading and Trailing Space</value>
+  </data>
+  <data name="TrimLeadingSpaceItem.Text" xml:space="preserve">
+    <value>Trim Leading Space</value>
+  </data>
+  <data name="TrimTrailingSpaceItem.Text" xml:space="preserve">
+    <value>Trim Trailing Space</value>
   </data>
   <data name="UndoButton.Label" xml:space="preserve">
     <value>Undo</value>

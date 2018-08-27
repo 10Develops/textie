@@ -141,6 +141,9 @@
   <data name="AppThemeTextBlock.Text" xml:space="preserve">
     <value>Тема приложения</value>
   </data>
+  <data name="AutoSaveToggle.Label" xml:space="preserve">
+    <value>Автосохранение</value>
+  </data>
   <data name="CloseAllTabsItem.Text" xml:space="preserve">
     <value>Очистить вкладки</value>
   </data>
@@ -176,6 +179,15 @@
   </data>
   <data name="EditToolTip" xml:space="preserve">
     <value>Правка</value>
+  </data>
+  <data name="FeedbackButton.Content" xml:space="preserve">
+    <value>Отправить отзыв</value>
+  </data>
+  <data name="FileNameItem.Text" xml:space="preserve">
+    <value>Имя файла</value>
+  </data>
+  <data name="FilePathItem.Text" xml:space="preserve">
+    <value>Путь к файлу</value>
   </data>
   <data name="FindAutoSuggestBox.PlaceholderText" xml:space="preserve">
     <value>Найти текст</value>
@@ -252,6 +264,9 @@
   <data name="SaveButton.Label" xml:space="preserve">
     <value>Сохранить</value>
   </data>
+  <data name="SaveFileMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Сохранить файл</value>
+  </data>
   <data name="SaveToolTip" xml:space="preserve">
     <value>Сохранить</value>
   </data>
@@ -270,6 +285,9 @@
   <data name="ShareButton.Label" xml:space="preserve">
     <value>Поделиться</value>
   </data>
+  <data name="SpaceOperationsItem.Text" xml:space="preserve">
+    <value>Операции с Пробелами</value>
+  </data>
   <data name="TabItem.Text" xml:space="preserve">
     <value>Табуляция</value>
   </data>
@@ -287,6 +305,15 @@
   </data>
   <data name="TransparencyToggleSwitch.Header" xml:space="preserve">
     <value>Эффекты прозрачности в содержании</value>
+  </data>
+  <data name="TrimLeadingnTrailingSpaceItem.Text" xml:space="preserve">
+    <value>Убрать Начальные и Замыкающие Пробелы</value>
+  </data>
+  <data name="TrimLeadingSpaceItem.Text" xml:space="preserve">
+    <value>Убрать Начальные Пробелы</value>
+  </data>
+  <data name="TrimTrailingSpaceItem.Text" xml:space="preserve">
+    <value>Убрать Замыкающие Пробелы</value>
   </data>
   <data name="UndoButton.Label" xml:space="preserve">
     <value>Отмена</value>
