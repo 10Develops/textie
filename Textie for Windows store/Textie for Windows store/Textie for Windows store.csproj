@@ -17,11 +17,11 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <PackageCertificateKeyFile>Textie for Windows store_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>10Develops.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>0D0D6F205003CA7DAE369D895AB95A6C85D01438</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>206C67ADDD275AB34DEBA2260E7708FAC8728B21</PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -133,6 +133,10 @@
     <Content Include="Assets\BadgeLogo.scale-150.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
+    <Content Include="Assets\LargeTile.scale-100.png" />
+    <Content Include="Assets\LargeTile.scale-125.png" />
+    <Content Include="Assets\LargeTile.scale-150.png" />
+    <Content Include="Assets\LargeTile.scale-200.png" />
     <Content Include="Assets\LargeTile.scale-400.png" />
     <Content Include="Assets\SmallTile.scale-100.png" />
     <Content Include="Assets\SmallTile.scale-125.png" />
@@ -202,7 +206,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\segmdl2.ttf" />
-    <None Include="Textie for Windows store_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
@@ -217,8 +220,11 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="XamlBrewer.Uwp.BackDrop">
-      <HintPath>..\..\..\..\..\Desktop\UWP-Composition-BackDrop-Control-master\XamlBrewer.Uwp.BackDrop\bin\Release\XamlBrewer.Uwp.BackDrop.dll</HintPath>
+      <HintPath>.\XamlBrewer.Uwp.BackDrop.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="10Develops.pfx" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
