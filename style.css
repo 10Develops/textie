@@ -43,10 +43,7 @@ p
 
 #menu-right
 {
-	border: 1px solid white;
-	width: 30px;
-	height: 15px;
-	margin-right: 20px;
+	margin-top: -16.7px;
 	float: right;
 }
 
@@ -97,6 +94,25 @@ p
 	position: relative;
 	float: right;
 	margin-right: 232px;
+}
+
+.dropdown{
+	width: 	100px;
+	height: 20px;
+	position: relative;
+	right: 20%;
+}
+
+.dropdown-content{
+	display: none;
+	margin-top: 5px;
+	margin-left: -50px;
+	z-index: 99;
+	min-width: 100%;
+}
+
+.dropdown:hover .dropdown-content{
+	display: block;
 }
 
 #current-version
