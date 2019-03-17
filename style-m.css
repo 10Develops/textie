@@ -13,8 +13,8 @@ li
 	border-radius: 4px;
 	background: #232423;
 	margin-left: 4px;
-	width: 80px;
-	height: 20px;
+    width: 80px;
+    height: 20px;
 }
 
 a
@@ -42,13 +42,6 @@ p
 	color: 	white;
 }
 
-#menu-left
-{
-	margin-top: -16.7px;
-	margin-left: -2%;
-	float: left;
-}
-
 #menu-right
 {
 	margin-top: -16.7px;
@@ -59,15 +52,17 @@ p
 {
 	position:relative;
 	float: right;
+	margin-top: 10%;
+	margin-left: 100%;
 }
 
 #text
 {
 	background: #232423;
-	margin-top: 50px;
-	margin-left: 4%;
+	margin-top: 2px;
+	margin-left: 1%;
 	height: 540px;
-	width: 50%;
+	width: 98%;
 	float: left;
 	border: 1.5px solid white;
 }
@@ -90,7 +85,8 @@ p
 #header
 {
 	font-size: 26px;
-	float:	left;
+	margin-left: 32%;
+	float: left;
 	position: relative;
 }
 
@@ -103,7 +99,7 @@ p
 
 .dropdown{
 	width: 	80px;
-	height: 19px;
+	height: 20px;
 	position: relative;
 	right: 20%;
 }
@@ -123,7 +119,9 @@ p
 #current-version
 {
 	position: relative;
-	float: right;
+    float: left;
+    margin-left: 15%;
+	margin-top: 1%;
 }
 
 #download
@@ -144,37 +142,4 @@ b
 body
 {
 	background:	black;
-}
-
-@media only screen and (min-width: 980px) {
-	#getit
-	{
-		margin-left: 14%;
-		margin-top: -6%;
-	}
-	#current-version
-	{
-		margin-top: 4%;
-		margin-right: -10%;
-	}
-	#header
-	{
-		margin-left: 28%;
-	}
-}
-@media only screen and (min-width: 1180px) {
-	#getit
-	{
-		margin-left: 14%;
-		margin-top: 35%;
-	}
-	#current-version
-	{
-		margin-top: 3%;
-		margin-right: -6%;
-	}
-	#header
-	{
-		margin-left: 38%;
-	}
 }
