@@ -14,6 +14,9 @@ Free source code and text editor app.
 * Uppercase and Lowercase text
 * Search text with search engines (Bing, Google, and Yahoo)
 * Trimming and Word wrap
-* Insert tab, date and time, file name and file path
+* Insert tab, date and time, file name and file path and manipulate Home and End keys
 * Print
 * Share
+* Pin file to Start
+* Hot Exit for Unsaved Files (opens unsaved files when app launched again)
+* Recent Files
