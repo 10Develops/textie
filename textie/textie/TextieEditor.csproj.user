@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DeviceId>30F105C9-681E-420b-A277-7C086EAD8A4E</DeviceId>
+    <UseEmulator>true</UseEmulator>
+    <RemoteDebugMachine>192.168.1.200</RemoteDebugMachine>
+    <AuthenticationMode>Windows</AuthenticationMode>
+    <RemoteDebugEnabled>false</RemoteDebugEnabled>
+    <DeployOptionalPackages>true</DeployOptionalPackages>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Source>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</Source>
+    <SmallTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</SmallTileSource>
+    <MediumTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</MediumTileSource>
+    <WideTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</WideTileSource>
+    <LargeTileSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</LargeTileSource>
+    <AppIconSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</AppIconSource>
+    <SplashScreenSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</SplashScreenSource>
+    <AppxPackageIsForStore>False</AppxPackageIsForStore>
+    <AppxShowAllApps>False</AppxShowAllApps>
+    <AppxBuildConfigurationSelection>x86|x64|arm</AppxBuildConfigurationSelection>
+    <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
+    <BadgeLogoSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</BadgeLogoSource>
+    <PackageLogoSource>C:\Users\user\Documents\Visual Studio 2017\Projects\Textie for Windows store\Textie for Windows store\Square150x150Logo.scale-250.png</PackageLogoSource>
+    <ProjectView>ProjectFiles</ProjectView>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <DeviceId>30F105C9-681E-420b-A277-7C086EAD8A4E</DeviceId>
+    <UseEmulator>true</UseEmulator>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <UseSimulator>false</UseSimulator>
+    <DeviceId>FCE1E487-5138-486A-AB00-21F191ED3F3B</DeviceId>
+    <UseEmulator>false</UseEmulator>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <UseSimulator>false</UseSimulator>
+    <DeviceId>362F2FFC-8775-4C87-A784-13CE2DCF05C4</DeviceId>
+    <UseEmulator>false</UseEmulator>
+  </PropertyGroup>
+</Project>
