@@ -24,7 +24,7 @@ Free source code and text editor app.
 ## Donate
 <table>
   <tr>
-    <td><img src="https://bitcoin.org/img/icons/opengraph.png" alt="Bitcoin"></td>
+    <td><img src="https://bitcoin.org/img/icons/opengraph.png" alt="Bitcoin" width="100px"></td>
     <td><img src="bitcoin_qr_code.png" alt="Bitcoin QR code" width="100px"></td>
     <td><samp>148grYTkmWABsGzFHQp8MHmkqTiv4ZJYBu</samp></td>
   </tr>
