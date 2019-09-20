@@ -20,3 +20,12 @@ Free source code and text editor app.
 * Pin file to Start
 * Hot Exit for Unsaved Files (opens unsaved files when app launched again)
 * Recent Files
+
+## Donate
+<table>
+  <tr>
+    <td><img src="https://bitcoin.org/img/icons/logotop.svg" alt="Bitcoin"></td>
+    <td><img src="bitcoin_qr_code.png" alt="Bitcoin QR code" width="100px"></td>
+    <td><samp>148grYTkmWABsGzFHQp8MHmkqTiv4ZJYBu</samp></td>
+  </tr>
+</table>
