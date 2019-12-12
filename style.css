@@ -68,9 +68,9 @@ p
 {
 	position: absolute;
 	background: #232423;
-	top: 13%;
+	top: 14%;
 	left: 10%;
-	height: 72%;
+	height: 70%;
 	width: 80%;
 	border: 1.5px solid white;
 }
@@ -117,7 +117,7 @@ p
 #current-version
 {
 	position: absolute;
-	top: 45px;
+	top: 40px;
 	left: auto;
 }
 
@@ -141,7 +141,7 @@ body
 	background:	black;
 }
 
-@media only screen and (min-width: 380px) {
+@media only screen and (min-width: 350px) {
 	#menu-right
 	{
 		top: -8px;
