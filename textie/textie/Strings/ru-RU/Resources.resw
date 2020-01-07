@@ -304,7 +304,7 @@
     <value>Вибрация недоступна в этом устройстве.</value>
   </data>
   <data name="VibrateToggleSwitch.Header" xml:space="preserve">
-    <value>Вибрировать при открытии меню правки</value>
+    <value>Вибрировать при открытии контекстного меню</value>
   </data>
   <data name="VibrationTextBlock.Text" xml:space="preserve">
     <value>Вибрация</value>
@@ -383,5 +383,23 @@
   </data>
   <data name="UnsavedOnlyHotExitComboBoxItem.Content" xml:space="preserve">
     <value>Только несохраненные файлы</value>
+  </data>
+  <data name="CloseTabItem.Text" xml:space="preserve">
+    <value>Закрыть вкладку</value>
+  </data>
+  <data name="SendFileEmailMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Отправить файл на эл. почту</value>
+  </data>
+  <data name="BottomTabBarPositionComboBox.Content" xml:space="preserve">
+    <value>Низ</value>
+  </data>
+  <data name="TabBarPositionTextBlock.Text" xml:space="preserve">
+    <value>Выберите положение панели вкладок</value>
+  </data>
+  <data name="TabBarTextBlock.Text" xml:space="preserve">
+    <value>Панель вкладок</value>
+  </data>
+  <data name="TopTabBarPositionComboBox.Content" xml:space="preserve">
+    <value>Верх</value>
   </data>
 </root>

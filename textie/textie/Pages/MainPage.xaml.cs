@@ -26,10 +26,16 @@ using Windows.Foundation;
 using System.Collections.ObjectModel;
 using Windows.UI.Input;
 using Windows.UI.Xaml.Controls.Primitives;
-using Mvvm.Services;
 using Windows.Storage.Streams;
 using System.Text;
 using System.Collections.Generic;
+using Windows.Phone.UI.Input;
+using Windows.Graphics.Display;
+using Windows.ApplicationModel.Email;
+using UnitedCodebase.Classes;
+using UnitedCodebase.Brushes;
+using Windows.ApplicationModel.Activation;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Textie
 {
@@ -37,6 +43,7 @@ namespace Textie
     {
         SystemNavigationManager currentView = SystemNavigationManager.GetForCurrentView();
 
+        ApplicationView appView = ApplicationView.GetForCurrentView();
         CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
         ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
 
@@ -49,8 +56,7 @@ namespace Textie
         private IPrintDocumentSource printDocSource;
 
         private bool IsCachedFilesAreOpened = false;
-        private bool IsOtherPageAreOpened = false;
-        private bool IsNavigatedOtherPage = false;
+        private Type NavigatedPageType;
 
         ObservableCollection<Item> dataList = new ObservableCollection<Item>();
 
@@ -67,26 +73,29 @@ namespace Textie
 
             coreTitleBar.ExtendViewIntoTitleBar = true;
 
-            //PC customization
             string titleBarColor = localSettings.Values["titleBarColor"].ToString();
-
+    
             Window.Current.CoreWindow.Activated += CoreWindow_Activated;
             Window.Current.CoreWindow.SizeChanged += CoreWindow_SizeChanged;
 
             InputPane pane = InputPane.GetForCurrentView();
             pane.Showing += Pane_Showing;
             pane.Hiding += Pane_Hiding;
-            currentView.BackRequested += CurrentView_BackRequested;
+
+            if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            {
+                HardwareButtons.CameraHalfPressed += HardwareButtons_CameraHalfPressed;
+            }
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
+            //PC customization
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
                 if (titleBar != null)
                 {
-                    ContentGrid.Margin = new Thickness(0, 32.4, 0, 0);
+                    ContentGrid.Margin = new Thickness(0, coreTitleBar.Height, 0, 0);
                     FindName(nameof(LeftAppTitleBar));
-                    FindName(nameof(MiddleAppTitleBar));
                     Window.Current.SetTitleBar(MiddleAppTitleBar);
                 }
             }
@@ -98,27 +107,51 @@ namespace Textie
             {
                 StatusBar statusBar = StatusBar.GetForCurrentView();
                 if (statusBar != null)
-                {                   
-                    statusBar.BackgroundOpacity = 100;
-                    TitleTextBlock.Visibility = Visibility.Collapsed;
-                    if (titleBarColor == "1")
+                {
+                    statusBar.BackgroundOpacity = 0;
+
+                    string theme = localSettings.Values["theme"].ToString();
+                    if (theme != "WD")
                     {
-                        statusBar.BackgroundColor = Resources["SystemAccentColor"] as Color?;
-                        statusBar.ForegroundColor = Colors.White;
+                        if (theme == "Dark")
+                        {
+                            statusBar.ForegroundColor = Colors.LightGray;
+                        }
+                        else if (theme == "Light")
+                        {
+                            statusBar.ForegroundColor = Colors.DarkSlateGray;
+                        }
                     }
 
-                    ContentGrid.Margin = new Thickness(0, 0, 0, 0);
+                    TitleTextBlock.FontSize = 13;
+                    TitleTextBlock.Margin = new Thickness(0, 0.6, 1, 0);
+                    MiddleAppTitleBar.Margin = new Thickness(0, -statusBar.OccludedRect.Height, 0, 0);
+                    MiddleAppTitleBar.Height = statusBar.OccludedRect.Height;
+
+                    ContentGrid.Margin = new Thickness(0, statusBar.OccludedRect.Top, 0, 0);
                 }
             }
 
+            appView.VisibleBoundsChanged += appView_VisibleBoundsChanged;
+
             TitleTextBlock.Text = ApplicationView.GetForCurrentView().Title;
+
+            string TabBarPosition = localSettings.Values["TabBarPosition"].ToString();
+            if (TabBarPosition == "1")
+            {
+                PivotMain.Style = Application.Current.Resources["PivotHeaderBottomStyle"] as Style;
+            }
+            else
+            {
+                PivotMain.Style = null;
+            }
 
             EditMenu = new RichEditBoxMenu();
 
-            timer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(4) };
+            timer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(2) };
             timer.Tick += PeriodicSave;
 
-            unSavedTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(4) };
+            unSavedTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(2) };
             unSavedTimer.Tick += CacheUnsavedFiles;
 
             Style EditMenuStyle = new Style { TargetType = typeof(MenuFlyoutPresenter) };
@@ -138,13 +171,55 @@ namespace Textie
 
             MakeKeyAccelerators();
 
-            ApiResources.NotifyUpdate();
+            ApiResources.NotifyUpdate(new Uri("https://www.dropbox.com/s/61jtlb9dnwcx3h8/New-Version.txt?dl=1"));
         }
 
         private void coreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
+            if (!appView.IsFullScreenMode)
+            {
+                ContentGrid.Margin = new Thickness(0, sender.Height, 0, 0);
+            }
+
+            TitleTextBlock.Margin = new Thickness(0, 5.5, 64, 0);
+
             MiddleAppTitleBar.Margin = new Thickness(64, 0, 0, 0);
             MiddleAppTitleBar.Height = sender.Height;
+        }
+
+        private void appView_VisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            MainCommandBar.IsOpen = false;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar") && !sender.IsFullScreenMode)
+            {
+                StatusBar statusBar = StatusBar.GetForCurrentView();
+
+                MiddleAppTitleBar.Height = statusBar.OccludedRect.Height;
+                MiddleAppTitleBar.Width = statusBar.OccludedRect.Width;
+
+                TitleTextBlock.Visibility = Visibility.Collapsed;
+
+                DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
+                if (displayInformation.CurrentOrientation == DisplayOrientations.Landscape)
+                {
+                    MiddleAppTitleBar.HorizontalAlignment = HorizontalAlignment.Left;
+                    MiddleAppTitleBar.Margin = new Thickness(-MiddleAppTitleBar.Width, -sender.VisibleBounds.Top, 0, -sender.VisibleBounds.Bottom);
+                }
+                else if (displayInformation.CurrentOrientation == DisplayOrientations.LandscapeFlipped)
+                {
+                    MiddleAppTitleBar.HorizontalAlignment = HorizontalAlignment.Right;
+                    MiddleAppTitleBar.Margin = new Thickness(0, -sender.VisibleBounds.Top, -MiddleAppTitleBar.Width, -sender.VisibleBounds.Bottom);
+                }
+                else
+                {
+                    MiddleAppTitleBar.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    MiddleAppTitleBar.Margin = new Thickness(0, -statusBar.OccludedRect.Height, 0, 0);
+                    TitleTextBlock.Visibility = Visibility.Visible;
+                }
+
+                ContentGrid.Margin = new Thickness(0, statusBar.OccludedRect.Top, 0, 0);
+            }
         }
 
         private void CoreWindow_Activated(CoreWindow sender, WindowActivatedEventArgs e)
@@ -178,7 +253,6 @@ namespace Textie
 
             if (currentEditBox != null)
             {
-                var appView = ApplicationView.GetForCurrentView();
                 if (!appView.IsFullScreenMode)
                 {
                     PivotMain.SelectedRichEditBoxItem.Margin = new Thickness(
@@ -191,15 +265,21 @@ namespace Textie
 
         private void CoreWindow_SizeChanged(CoreWindow sender, WindowSizeChangedEventArgs e)
         {
-            var appView = ApplicationView.GetForCurrentView();
             if (appView.IsFullScreenMode)
             {
-                //maximized
-                ContentGrid.Margin = new Thickness(0, -48, 0, 0);
-               
+                if(PivotMain.Style == null)
+                {
+                    ContentGrid.Margin = new Thickness(0, -48, 0, 0);
+                }
+                else
+                {
+                    ContentGrid.Margin = new Thickness(0, 0, 0, -48);
+                }
+
                 ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
 
-                MiddleAppTitleBar.Visibility = Visibility.Collapsed;
+                LeftAppTitleBar.Opacity = 0;
+                MiddleAppTitleBar.Opacity = 0;
             }
             else
             {
@@ -207,38 +287,37 @@ namespace Textie
 
                 if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
                 {
-                    var titleBar = appView.TitleBar;
                     if (titleBar != null)
                     {
-                        ContentGrid.Margin = new Thickness(0, 32.4, 0, 0);
-
-                        MiddleAppTitleBar.Visibility = Visibility.Visible;
+                        ContentGrid.Margin = new Thickness(0, coreTitleBar.Height, 0, 0);
                     }
                 }
 
                 if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
                 {
-                    var statusBar = StatusBar.GetForCurrentView();
+                    StatusBar statusBar = StatusBar.GetForCurrentView();
                     if (statusBar != null)
                     {
-                        ContentGrid.Margin = new Thickness(0, 0, 0, 0);
-
-                        MiddleAppTitleBar.Visibility = Visibility.Collapsed;
+                        ContentGrid.Margin = new Thickness(0, statusBar.OccludedRect.Top, 0, 0);
                     }
                 }
 
                 e.Handled = true;
+
+                LeftAppTitleBar.Opacity = 1;
+                MiddleAppTitleBar.Opacity = 1;
             }
         }
 
         private void CurrentView_BackRequested(object sender, BackRequestedEventArgs e)
         {
             InputPane pane = InputPane.GetForCurrentView();
-            var appView = ApplicationView.GetForCurrentView();
+
+            e.Handled = true;
+
             if (appView.IsFullScreenMode)
             {
                 appView.ExitFullScreenMode();
-                e.Handled = true;
             }
             else
             {
@@ -246,13 +325,53 @@ namespace Textie
             }
         }
 
+        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs args)
+        {
+            double FullScreenOverride = ContentGrid.Margin.Top + 48;
+            if (appView.IsFullScreenMode)
+            {
+                FullScreenOverride = 0;
+            }
+
+            if (args.CurrentPoint.Properties.IsXButton1Pressed)
+            {
+                args.Handled = true;
+
+                if (appView.IsFullScreenMode)
+                {
+                    appView.ExitFullScreenMode();
+                }
+                else
+                {
+                    args.Handled = false;
+                }
+            }
+
+            string SelectionText = currentEditBox.Document.Selection.Text;
+            if (args.CurrentPoint.Properties.IsMiddleButtonPressed && currentEditBox.FocusState == FocusState.Pointer && !string.IsNullOrEmpty(SelectionText) && args.CurrentPoint.Position.Y > FullScreenOverride)
+            {
+                if ((SelectionText.StartsWith("http://") || SelectionText.StartsWith("https://")) && SelectionText.Contains("."))
+                {
+                    WebResources.Navigate(SelectionText);
+                }
+            }
+        }
+
+        private void HardwareButtons_CameraHalfPressed(object sender, CameraEventArgs e)
+        {
+            InputPane pane = InputPane.GetForCurrentView();
+            if (appView.IsFullScreenMode)
+            {
+                appView.ExitFullScreenMode();
+            }
+        }
+
         private void Pane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
             if (currentEditBox != null)
             {
-                currentEditBox.Margin = new Thickness(
-                    0, 0, 0,
-                    sender.OccludedRect.Height);                
+                PivotMain.Margin = new Thickness(
+                    0, 0, 0, args.OccludedRect.Height);
             }
         }
 
@@ -260,8 +379,8 @@ namespace Textie
         {
             if (currentEditBox != null)
             {
-                currentEditBox.Margin = new Thickness(
-                    0, 0, 0, 0);
+                PivotMain.Margin = new Thickness(
+                    0, 0, 0, args.OccludedRect.Height);
             }
         }
 
@@ -285,6 +404,15 @@ namespace Textie
                     Window.Current.SetTitleBar(MiddleAppTitleBar);
                 }
             }
+            //Mobile customization
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                StatusBar statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundOpacity = 0;
+                }
+            }
 
             if (await ApplicationData.Current.LocalFolder.TryGetItemAsync("UsavedFiles") == null)
                 await ApplicationData.Current.LocalFolder.CreateFolderAsync("UsavedFiles");
@@ -298,7 +426,7 @@ namespace Textie
                 string activationArgs = e.Parameter.ToString();
                 if (activationArgs != "NewWindow")
                 {
-                    if(IsOtherPageAreOpened == false && IsCachedFilesAreOpened == false && hotExit == "1")
+                    if(IsCachedFilesAreOpened == false && hotExit == "1")
                     {
                         IReadOnlyList<StorageFile> files = await unsavedFolder.GetFilesAsync();
                         if (files.Count > 0)
@@ -306,7 +434,7 @@ namespace Textie
                             foreach (StorageFile file in files)
                             {
                                 await OpenFile(file, true);
-                                await Task.Delay(140);
+                                await Task.Delay(200);
                             }
                         }
                         else
@@ -325,30 +453,28 @@ namespace Textie
                         {
                             AddTab("New Tab " + PivotMain.Items.Count);
                         }
-
-                        IsCachedFilesAreOpened = false;
                     }
-
-                    unSavedTimer.Start();
                 }
                 else
                 {
                     if (PivotMain.Items.Count == 0)
                     {
-                        AddTab("New Tab " + PivotMain.Items.Count);
+                        string uniqueName = await ApiResources.GetUniqueName("New Tab " + PivotMain.Items.Count, unsavedFolder);
+                        AddTab("New Tab " + PivotMain.Items.Count + " " + uniqueName);
                     }
                 }
 
                 timer.Start();
+                unSavedTimer.Start();
 
-                if (activationArgs == "OpenFile" && IsOtherPageAreOpened == false && IsNavigatedOtherPage == false)
+                if (activationArgs == "OpenFile" && NavigatedPageType != typeof(SettingsPage))
                 {
                     OpenFile();
                 }
 
                 if (!string.IsNullOrEmpty(activationArgs) && activationArgs != "Windows.ApplicationModel.Activation.FileActivatedEventArgs"
                 && activationArgs != "Windows.ApplicationModel.Activation.ProtocolActivatedEventArgs" && activationArgs != "Windows.ApplicationModel.Activation.ToastNotificationActivatedEventArgs"
-                && activationArgs != "OpenFile" && IsOtherPageAreOpened == false)
+                && activationArgs != "OpenFile" && NavigatedPageType != typeof(SettingsPage))
                 {
                     StorageLibrary documentsLibrary = await ApiResources.TryAccessLibraryAsync(KnownLibraryId.Documents);
                     StorageLibrary musicLibrary = await ApiResources.TryAccessLibraryAsync(KnownLibraryId.Music);
@@ -420,39 +546,58 @@ namespace Textie
                 AddTab("New Tab " + PivotMain.Items.Count);
             }
 
-            var args = e.Parameter as Windows.ApplicationModel.Activation.IActivatedEventArgs;
-            if (args != null)
+            IActivatedEventArgs args = e.Parameter as IActivatedEventArgs;
+            if (args != null && NavigatedPageType != typeof(SettingsPage))
             {
-                if (args.Kind == Windows.ApplicationModel.Activation.ActivationKind.File)
+                if (args.Kind == ActivationKind.File)
                 {
-                    var fileArgs = args as Windows.ApplicationModel.Activation.FileActivatedEventArgs;
+                    FileActivatedEventArgs fileArgs = args as FileActivatedEventArgs;
                     foreach(StorageFile file in fileArgs.Files)
                     {
-                        await OpenFile(file, false);
-                        await Task.Delay(200);
+                        await Task.WhenAll(OpenFile(file, false));
                     }
                 }
 
-                if(args.Kind == Windows.ApplicationModel.Activation.ActivationKind.Protocol)
+                if(args.Kind == ActivationKind.Protocol)
                 {
-                    var protocolArgs = args as Windows.ApplicationModel.Activation.ProtocolActivatedEventArgs;
+                    ProtocolActivatedEventArgs protocolArgs = args as ProtocolActivatedEventArgs;
                     if(protocolArgs.Uri.AbsoluteUri == "textie:OpenFile")
                     {
                         OpenFile();
                     }
                 }
-            }
 
-            if (e.SourcePageType == typeof(SettingsPage))
-            {
-                if (hotExit == "1" && IsCachedFilesAreOpened == true)
+                if(args.Kind == ActivationKind.ToastNotification)
                 {
-                    IsOtherPageAreOpened = true;
+                    ToastNotificationActivatedEventArgs protocolArgs = args as ToastNotificationActivatedEventArgs;
+
+                    if (ApiResources.GetQueryVariable(protocolArgs.Argument, "action") == "selecttab")
+                    {
+                        foreach (RichEditBoxPivotItem item in PivotMain.Items)
+                        {
+                            if (item.Header.ToString() == ApiResources.GetQueryVariable(protocolArgs.Argument, "tab").Replace("_", " "))
+                            {
+                                await Task.Delay(100);
+                                PivotMain.SelectedItem = item;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (ApiResources.GetQueryVariable(protocolArgs.Argument, "action") == "savefile")
+                    {
+                        foreach (RichEditBoxPivotItem item in PivotMain.Items)
+                        {
+                            if (item.Header.ToString() == ApiResources.GetQueryVariable(protocolArgs.Argument, "file").Replace("_", " "))
+                            {
+                                PivotMain.SelectedItem = item;
+                                await Task.Delay(300);
+                                SaveFileAs(item, false);
+                                break;
+                            }
+                        }
+                    }
                 }
-            }
-            else
-            {
-                IsOtherPageAreOpened = false;
             }
 
             string TextBoxTheme = localSettings.Values["TextBoxTheme"].ToString();
@@ -480,20 +625,27 @@ namespace Textie
                 item.EditBox.FontFamily = new FontFamily(FontType);
             }
 
+            currentView.BackRequested += CurrentView_BackRequested;
+            Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
+
             SettingsButton.IsEnabled = true;
 
             try
             {
-                // Register for PrintTaskRequested event
-                printMan = PrintManager.GetForCurrentView();
-                printMan.PrintTaskRequested += PrintTaskRequested;
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3)
+                    && PrintManager.IsSupported())
+                {
+                    // Register for PrintTaskRequested event
+                    printMan = PrintManager.GetForCurrentView();
+                    printMan.PrintTaskRequested += PrintTaskRequested;
 
-                // Build a PrintDocument and register for callbacks
-                printDoc = new PrintDocument();
-                printDocSource = printDoc.DocumentSource;
-                printDoc.Paginate += Paginate;
-                printDoc.GetPreviewPage += GetPreviewPage;
-                printDoc.AddPages += AddPages;
+                    // Build a PrintDocument and register for callbacks
+                    printDoc = new PrintDocument();
+                    printDocSource = printDoc.DocumentSource;
+                    printDoc.Paginate += Paginate;
+                    printDoc.GetPreviewPage += GetPreviewPage;
+                    printDoc.AddPages += AddPages;
+                }
             }
             catch (Exception)
             {
@@ -504,23 +656,9 @@ namespace Textie
         {
             base.OnNavigatedFrom(e);
 
+            NavigatedPageType = e.SourcePageType;
+
             MainCommandBar.IsOpen = false;
-
-            string hotExit = localSettings.Values["hotExit"].ToString();
-            if (e.SourcePageType != typeof(MainPage))
-            {
-                IsNavigatedOtherPage = true;
-
-                if(hotExit == "1" && IsCachedFilesAreOpened == true)
-                {
-                    IsOtherPageAreOpened = true;
-                }
-            }
-            else
-            {
-                IsNavigatedOtherPage = false;
-                IsOtherPageAreOpened = false;
-            }
 
             timer.Stop();
             
@@ -528,15 +666,19 @@ namespace Textie
 
             try
             {
-                printMan.PrintTaskRequested -= PrintTaskRequested;
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3)
+                    && PrintManager.IsSupported())
+                {
+                    printMan.PrintTaskRequested -= PrintTaskRequested;
 
-                printDoc.Paginate -= Paginate;
-                printDoc.GetPreviewPage -= GetPreviewPage;
-                printDoc.AddPages -= AddPages;
+                    printDoc.Paginate -= Paginate;
+                    printDoc.GetPreviewPage -= GetPreviewPage;
+                    printDoc.AddPages -= AddPages;
 
-                printMan = null;
-                printDoc = null;
-                printDocSource = null;
+                    printMan = null;
+                    printDoc = null;
+                    printDocSource = null;
+                }
             }
             catch (Exception)
             {
@@ -547,11 +689,11 @@ namespace Textie
         #region "Grids"
         private void MainGrid_Loading(FrameworkElement sender, object args)
         {
-            AddTabButton.Label = "";
-            CloseTabButton.Label = "";
-            OpenButton.Label = "";
-            SaveButton.Label = "";
-            EditButton.Label = "";
+            AddTabButton.Label = string.Empty;
+            CloseTabButton.Label = string.Empty;
+            OpenButton.Label = string.Empty;
+            SaveButton.Label = string.Empty;
+            EditButton.Label = string.Empty;
 
             ResourceLoader loader = ResourceLoader.GetForCurrentView();
 
@@ -600,7 +742,6 @@ namespace Textie
         {
             if (e.Key == VirtualKey.F11)
             {
-                var appView = ApplicationView.GetForCurrentView();
                 if (appView.IsFullScreenMode)
                 {
                     appView.ExitFullScreenMode();
@@ -611,7 +752,7 @@ namespace Textie
                 }
             }
 
-            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+            CoreVirtualKeyStates ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
             if (ctrl.HasFlag(CoreVirtualKeyStates.Down) && e.Key == VirtualKey.F)
             {
                 FindFlyout.ShowAt(MainCommandBar);
@@ -657,30 +798,50 @@ namespace Textie
 
         #region "Command bar"
 
+        bool CommandBarPanelOpened = false;
         private void MainCommandBar_Opening(object sender, object e)
         {
-            if (EditButton.Visibility == Visibility.Visible)
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
             {
-                SecondaryCommands.ShowAt(EditButton);
+                SecondaryCommands.OverlayInputPassThroughElement = PivotMain;
             }
-            else
+
+            Button focusedButton = FocusManager.GetFocusedElement() as Button;
+            if (CommandBarPanelOpened == false)
             {
-                SecondaryCommands.ShowAt(SaveButton);
+                if (focusedButton != null && focusedButton.Name == "MoreButton")
+                {
+                    SecondaryCommands.ShowAt(focusedButton);
+                }
+                InputPane.GetForCurrentView().TryHide();
             }
         }
 
+        private void MainCommandBar_Closing(object sender, object e)
+        {
+            if(CommandBarPanelOpened == true)
+            {
+                if (appView.IsFullScreenMode)
+                {
+                    currentEditBox.Focus(FocusState.Programmatic);
+                }
+
+                SecondaryCommands.Hide();
+            }
+        }
+
+        private void SecondaryCommands_Opened(object sender, object e)
+        {
+            CommandBarPanelOpened = true;
+        }
 
         private void SecondaryCommands_Closed(object sender, object e)
         {
-            if (MainCommandBar.IsOpen == true)
+            CommandBarPanelOpened = false;
+            Button focusedButton = FocusManager.GetFocusedElement() as Button;
+            if( focusedButton == null || (focusedButton != null && (focusedButton.Name != "MoreButton" || focusedButton.Name == "MoreButton" && !focusedButton.IsPressed)))
             {
                 MainCommandBar.IsOpen = false;
-            }
-
-            var appView = ApplicationView.GetForCurrentView();
-            if (appView.IsFullScreenMode)
-            {
-                currentEditBox.Focus(FocusState.Programmatic);
             }
         }
 
@@ -767,7 +928,11 @@ namespace Textie
                 }
                 else
                 {
-                    ApiResources.Notify("Save file", string.Format( "\"{0}\" is not saved because is not have a saved file.", page.HeaderTextBlock.Text));
+                    UCNotification notification = new UCNotification("Save file", string.Format("\"{0}\" is can't pin because is not have a saved file.", page.Header));
+                    notification.ToastLaunchArguments = "action=selecttab&tab=" + page.ListViewItem.CopiedFileName.Replace(" ", "_");
+                    notification.ToastButtonContent = "Save file";
+                    notification.ToastButtonArguments = "action=savefile&file=" + page.ListViewItem.CopiedFileName.Replace(" ", "_");
+                    notification.ShowNotification();
                 }
             }
         }
@@ -837,7 +1002,7 @@ namespace Textie
         {
             SettingsButton.IsEnabled = false;
 
-            this.Frame.Navigate(typeof(SettingsPage));
+            this.Frame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo());
         }
         #endregion
 
@@ -847,13 +1012,25 @@ namespace Textie
 
         private void HeaderTextBlock_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            UIElement senderUI = sender as UIElement;
-            TabMenuFlyout.ShowAt(senderUI, e.GetPosition(senderUI));
+            FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
         }
 
         private void AddTabItem_Click(object sender, RoutedEventArgs e)
         {
             AddTab("New Tab " + PivotMain.Items.Count);
+        }
+
+        private void CloseTabItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem button = sender as MenuFlyoutItem;
+            foreach (RichEditBoxPivotItem item in PivotMain.Items)
+            {
+                if (item.Header.ToString() == button.DataContext.ToString())
+                {
+                    CloseOneTab(item);
+                    break;
+                }
+            }
         }
 
         private void CloseAllTabsItem_Click(object sender, RoutedEventArgs e)
@@ -863,9 +1040,24 @@ namespace Textie
 
         private void CloseOtherTabsItem_Click(object sender, RoutedEventArgs e)
         {
-            foreach(Item item in dataList)
+            MenuFlyoutItem button = sender as MenuFlyoutItem;
+            foreach (RichEditBoxPivotItem item in PivotMain.Items)
             {
-                CloseOneTab(item.PivotItem);
+                PivotMain.SelectedItem = item;
+
+                if (PivotMain.SelectedRichEditBoxItem.Header.ToString() != button.DataContext.ToString())
+                {
+                    PivotMain.CloseTab(PivotMain.SelectedRichEditBoxItem);
+                }
+                else
+                {
+                    continue;
+                }
+
+                if(PivotMain.Items.Count == 1)
+                {
+                    break;
+                }
             }
         }
 
@@ -900,16 +1092,28 @@ namespace Textie
 
         private void TextBlock_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            var senderText = sender as TextBlock;
+            TextBlock senderText = sender as TextBlock;
             SolidColorBrush redBrush = new SolidColorBrush(Colors.Red);
             senderText.Foreground = redBrush;
         }
 
         private void TextBlock_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            var senderText = sender as TextBlock;
+            TextBlock senderText = sender as TextBlock;
             SolidColorBrush whiteBrush = new SolidColorBrush(Colors.White);
             senderText.Foreground = whiteBrush;
+        }
+
+        Item senderItem;
+        private async void ListViewItemGrid_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            if (e.HoldingState == HoldingState.Completed)
+            {
+                await Task.Delay(100);
+                FlyoutBase.GetAttachedFlyout(sender as FrameworkElement).ShowAt(AllTabsButton);
+                senderItem = (sender as Grid).DataContext as Item;
+                ApiResources.Vibrate(50);
+            }
         }
 
         private void ListViewItemGrid_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -925,30 +1129,17 @@ namespace Textie
             CloseOneTab(item.PivotItem);
         }
 
-        private void CloseTabMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            MenuFlyoutItem button = sender as MenuFlyoutItem;
-            Item item = button.DataContext as Item;
-            CloseOneTab(item.PivotItem);
-        }
-
-        private void FileInfoMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            MenuFlyoutItem button = sender as MenuFlyoutItem;
-            Item item = button.DataContext as Item;
-            if (item.File != null)
-            {
-                item.ShowFileInfoDialog();
-            }
-        }
-
         private async void SaveFileMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MenuFlyoutItem button = sender as MenuFlyoutItem;
             Item item = button.DataContext as Item;
+            if (item == null)
+            {
+                item = senderItem;
+            }
 
             string autoSave = localSettings.Values["autoSave"].ToString();
-            if(autoSave == "0")
+            if (autoSave == "0")
             {
                 if (item.File != null && item.CopiedFile == null)
                 {
@@ -959,19 +1150,94 @@ namespace Textie
                     SaveFileAs(item.PivotItem, false);
                 }
             }
+            else
+            {
+                if (item.File == null && item.CopiedFile != null)
+                {
+                    SaveFileAs(item.PivotItem, false);
+                }
+            }
+        }
+
+        private void CloseTabMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem button = sender as MenuFlyoutItem;
+            Item item = button.DataContext as Item;
+            if (item == null)
+            {
+                item = senderItem;
+            }
+
+            CloseOneTab(item.PivotItem);
+        }
+
+        private void SendFileEmailMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem button = sender as MenuFlyoutItem;
+            Item item = button.DataContext as Item;
+            if (item == null)
+            {
+                item = senderItem;
+            }
+
+            if (item.File != null)
+            {
+                SendEmail(item.File);
+            }
+            else
+            {
+                UCNotification notification = new UCNotification("Save file", string.Format("\"{0}\" is can't pin because is not have a saved file.", item.Title));
+                notification.ToastLaunchArguments = "action=selecttab&tab=" + item.CopiedFileName.Replace(" ", "_");
+                notification.ToastButtonContent = "Save file";
+                notification.ToastButtonArguments = "action=savefile&file=" + item.CopiedFileName.Replace(" ", "_");
+                notification.ShowNotification();
+            }
+        }
+
+        private void FileInfoMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem button = sender as MenuFlyoutItem;
+            Item item = button.DataContext as Item;
+            if(item == null)
+            {
+                item = senderItem;
+            }
+
+            if (item.File != null)
+            {
+                item.ShowFileInfoDialog();
+            }
         }
 
         #endregion
 
         private async void mruMenuFlyout_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItem = sender as MenuFlyoutItem;
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            MenuFlyoutItem selectedItem = sender as MenuFlyoutItem;
+            StorageItemMostRecentlyUsedList mru = StorageApplicationPermissions.MostRecentlyUsedList;
             IAsyncOperation<StorageFile> asyncOperation = mru.GetFileAsync(selectedItem.Tag.ToString());
-            if (asyncOperation.Status == AsyncStatus.Completed)
+            try
             {
-                StorageFile file = await asyncOperation;
-                await OpenFile(file, false);
+                if (mru.CheckAccess(await asyncOperation))
+                {
+                    StorageFile file = await asyncOperation;
+                    await OpenFile(file, false);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                ContentDialog fileNotFoundDialog = new ContentDialog()
+                {
+                    Title = "File error",
+                    Content = "\r\nFile is not found!",
+                    PrimaryButtonText = "OK"
+                };
+
+                await fileNotFoundDialog.ShowAsync();
+
+                StorageApplicationPermissions.MostRecentlyUsedList.Remove(selectedItem.Tag.ToString());
+
+                AddRecentFiles();
             }
         }
 
@@ -1046,13 +1312,12 @@ namespace Textie
 
         private void PivotMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var appView = ApplicationView.GetForCurrentView();
             if (appView.IsFullScreenMode)
             {
                 appView.ExitFullScreenMode();
             }
 
-            if(PivotMain.SelectedRichEditBoxItem != null)
+            if (PivotMain.SelectedRichEditBoxItem != null)
             {
                 currentEditBox = PivotMain.SelectedRichEditBox;
 
@@ -1060,35 +1325,56 @@ namespace Textie
 
                 currentEditBox.Margin = new Thickness(0, 0, 0, 0);
 
-                var file = (StorageFile)currentEditBox.Tag;
+                StorageFile file = (StorageFile)currentEditBox.Tag;
                 if (currentEditBox.Tag == null)
                 {
-                    if(PivotMain.SelectedRichEditBoxItem.Header != null)
+                    if (PivotMain.SelectedRichEditBoxItem.Header != null)
                     {
-                        appView.Title = 
-                            ((TextBlock)PivotMain.SelectedRichEditBoxItem.Header).Text;
+                        string ItemHeader = PivotMain.SelectedRichEditBoxItem.Header.ToString();
+                        appView.Title = ItemHeader;
                     }
-
-                    SaveButton.IsEnabled = true;
                 }
                 else
                 {
-                    appView.Title = Path.GetFileName(file.Path);
+                    string ItemHeader = Path.GetFileName(file.Path);
+                    DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
+                    if (displayInformation.DiagonalSizeInInches < 5.0 || displayInformation.ResolutionScale > ResolutionScale.Scale400Percent)
+                    {
+                        if (ItemHeader.Length < 11)
+                        {
+                            appView.Title = ItemHeader;
+                        }
+                        else
+                        {
+                            appView.Title = string.Format("{0} ... {1}", ItemHeader.Substring(0, 6), ItemHeader.Substring(ItemHeader.Length - 3));
+                        }
+                    }
+                    else
+                    {
+                        if (ItemHeader.Length < 18)
+                        {
+                            appView.Title = ItemHeader;
+                        }
+                        else
+                        {
+                            appView.Title = string.Format("{0} ... {1}", ItemHeader.Substring(0, 13), ItemHeader.Substring(ItemHeader.Length - 3));
+                        }
+                    }
 
                     if (file.Path.EndsWith(".html") || file.Path.EndsWith(".htm"))
                     {
                         LaunchButton.IsEnabled = true;
                     }
+                }
 
-                    string autoSave = localSettings.Values["autoSave"].ToString();
-                    if(autoSave == "0")
-                    {
-                        SaveButton.IsEnabled = currentEditBox.ReadyToSave;
-                    }
-                    else
-                    {
-                        SaveButton.IsEnabled = false;
-                    }
+                string autoSave = localSettings.Values["autoSave"].ToString();
+                if (autoSave == "0" || (currentEditBox.Tag == null && autoSave == "1"))
+                {
+                    SaveButton.IsEnabled = currentEditBox.TextSaveState == RichEditBoxCore.SaveState.TextIsChanged;
+                }
+                else
+                {
+                    SaveButton.IsEnabled = false;
                 }
             }
 
@@ -1106,10 +1392,10 @@ namespace Textie
                 CloseTabButton2.IsEnabled = true;
             }
 
-            var CanUndo = currentEditBox.Document.CanUndo();
+            bool CanUndo = currentEditBox.Document.CanUndo();
             UndoButton.IsEnabled = CanUndo;
 
-            var CanRedo = currentEditBox.Document.CanRedo();
+            bool CanRedo = currentEditBox.Document.CanRedo();
             RedoButton.IsEnabled = CanRedo;
 
             if (!ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -1202,10 +1488,10 @@ namespace Textie
         #region "currentEditBox"
         private void currentEditBox_TextChanged(object sender, RoutedEventArgs e)
         {
-            var CanUndo = currentEditBox.Document.CanUndo();
+            bool CanUndo = currentEditBox.Document.CanUndo();
             UndoButton.IsEnabled = CanUndo;
 
-            var CanRedo = currentEditBox.Document.CanRedo();
+            bool CanRedo = currentEditBox.Document.CanRedo();
             RedoButton.IsEnabled = CanRedo;
 
             if (!ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -1229,18 +1515,16 @@ namespace Textie
                 }
             }
 
-            currentEditBox.ReadyToSave = true;
-
             if (currentEditBox.Tag == null)
             {
-                SaveButton.IsEnabled = true;
+                SaveButton.IsEnabled = currentEditBox.TextSaveState == RichEditBoxCore.SaveState.TextIsChanged;
             }
             else
             {
                 string autoSave = localSettings.Values["autoSave"].ToString();
                 if(autoSave == "0")
                 {
-                    SaveButton.IsEnabled = currentEditBox.ReadyToSave;
+                    SaveButton.IsEnabled = currentEditBox.TextSaveState == RichEditBoxCore.SaveState.TextIsChanged;
                 }
                 else
                 {
@@ -1270,10 +1554,7 @@ namespace Textie
             }
             else
             {
-                if (currentEditBox.Document.Selection.CharacterFormat.BackgroundColor ==
-                        Colors.LimeGreen ||
-                        currentEditBox.Document.Selection.CharacterFormat.BackgroundColor ==
-                        Colors.Yellow)
+                if (currentEditBox.Document.Selection.CharacterFormat.BackgroundColor != Colors.White)
                 {
                     currentEditBox.Document.Selection.CharacterFormat.BackgroundColor =
                         Colors.White;
@@ -1284,16 +1565,36 @@ namespace Textie
         private void currentEditBox_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             UIElement senderUI = sender as UIElement;
+            e.Handled = true;
             EditMenu.ContextFlyout.ShowAt(senderUI, e.GetPosition(senderUI));
         }
 
         private void currentEditBox_Holding(object sender, HoldingRoutedEventArgs e)
         {
             UIElement senderUI = sender as UIElement;
+            e.Handled = true;
             if(e.HoldingState == HoldingState.Started)
             {
                 EditMenu.ContextFlyout.ShowAt(senderUI, e.GetPosition(senderUI));
             }
+        }
+
+        private void currentEditBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            if(EditMenu.SelectionFlyout != null)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                currentEditBox.ContextFlyout = EditMenu.ContextFlyout;
+                e.Handled = true;
+            }
+        }
+
+        private void currentEditBox_ContextCanceled(UIElement sender, RoutedEventArgs args)
+        {
+            EditMenu.ContextFlyout.Hide();
         }
 
         private void currentEditBox_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
@@ -1349,19 +1650,32 @@ namespace Textie
         #region "Find / Replace"
         private void FindAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            int find;
             if(MatchCaseFindCheckBox.IsChecked == true)
             {
-                currentEditBox.Find(FindAutoSuggestBox.Text, true);
+                find = currentEditBox.Find(FindAutoSuggestBox.Text, true);
             }
             else
             {
-                currentEditBox.Find(FindAutoSuggestBox.Text, false);
+                find = currentEditBox.Find(FindAutoSuggestBox.Text, false);
             }
 
             if (currentEditBox.TextSelection != null)
             {
                 currentEditBox.TextSelection.CharacterFormat.BackgroundColor = Colors.White;
             }
+
+            if(find > 0)
+            {
+                FindResultsTextBlock.Text = "1/" + find;
+            }
+            else
+            {
+                FindResultsTextBlock.Text = "0/0";
+            }
+
+            MainGrid.UpdateLayout();
+            currentEditBox.UpdateLayout();
         }
 
         private void WhatAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -1371,13 +1685,28 @@ namespace Textie
 
         private void WithAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            if(MatchCaseReplaceCheckBox.IsChecked == true)
+            int replace;
+            if (MatchCaseReplaceCheckBox.IsChecked == true)
             {
-                currentEditBox.Replace(WhatAutoSuggestBox.Text, WithAutoSuggestBox.Text, true);
+                replace = currentEditBox.Replace(WhatAutoSuggestBox.Text, WithAutoSuggestBox.Text, true);
             }
             else
             {
-                currentEditBox.Replace(WhatAutoSuggestBox.Text, WithAutoSuggestBox.Text, false);
+                replace = currentEditBox.Replace(WhatAutoSuggestBox.Text, WithAutoSuggestBox.Text, false);
+            }
+
+            if (currentEditBox.TextSelection != null)
+            {
+                currentEditBox.TextSelection.CharacterFormat.BackgroundColor = Colors.White;
+            }
+
+            if (replace > 0)
+            {
+                ReplaceResultsTextBlock.Text = "1/" + replace;
+            }
+            else
+            {
+                ReplaceResultsTextBlock.Text = "0/0";
             }
         }
 
@@ -1399,7 +1728,7 @@ namespace Textie
         {
             // Create the PrintTask.
             // Defines the title and delegate for PrintTaskSourceRequested
-            var printTask = args.Request.CreatePrintTask("Print", PrintTaskSourceRequrested);
+            PrintTask printTask = args.Request.CreatePrintTask("Print", PrintTaskSourceRequrested);
 
             // Handle PrintTask.Completed to catch failed print jobs
             printTask.Completed += PrintTaskCompleted;
@@ -1453,46 +1782,37 @@ namespace Textie
         #region "Methods"
         private void AddTab(string Header)
         {
-            var newTab = PivotMain.AddTab();
+            RichEditBoxPivotItem newTab = PivotMain.AddTab();
             newTab.Name = "Tab" + PivotMain.Items.Count;
 
-            //Until Windows 10 version 1607 for context flyout works only Holding and RightTapped events 
-            newTab.HeaderTextBlock.RightTapped += HeaderTextBlock_RightTapped;
-
-            if (Header.Length <= 15)
-            {
-                newTab.HeaderTextBlock.Text = Header;
-            }
-            else
-            {
-                newTab.HeaderTextBlock.Text = 
-                    string.Format("{0}...", Header.Substring(0, 15));
-            }
+            PivotMain.SelectedRichEditBoxItem.Header = Header;
 
             newTab.Tag = newTab;
 
             //Sets titlebar text
-            var appView = ApplicationView.GetForCurrentView();
             appView.Title = Header;
 
             TitleTextBlock.Text = string.Format("{0} – {1}", appView.Title,
                 Package.Current.DisplayName);
 
             //Adds items in all tabs list
-            newTab.ListViewItem.Title = newTab.HeaderTextBlock.Text;
+            newTab.ListViewItem.Title = newTab.Header.ToString();
             dataList.Add(newTab.ListViewItem);
-
-            ToolTipService.SetToolTip(newTab.HeaderTextBlock, Header);
 
             //Events
             currentEditBox.TextChanged += new RoutedEventHandler(currentEditBox_TextChanged);
             currentEditBox.SelectionChanged += new RoutedEventHandler(currentEditBox_SelectionChanged);
             currentEditBox.DoubleTapped += new DoubleTappedEventHandler(currentEditBox_DoubleTapped);
 
+            //Until Windows 10 version 1607 for context flyout works only Holding and RightTapped events 
             if (!ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
             {
                 currentEditBox.RightTapped += currentEditBox_RightTapped;
                 currentEditBox.Holding += currentEditBox_Holding;
+            }
+            else
+            {
+                currentEditBox.ContextMenuOpening += currentEditBox_ContextMenuOpening;
             }
         }
 
@@ -1500,36 +1820,49 @@ namespace Textie
         {
             //It is for testing, if delete some file from Recent Files list, this will be throw FileNotFoundException
             RecentFilesFlyout.Items.Clear();
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            StorageItemMostRecentlyUsedList mru = StorageApplicationPermissions.MostRecentlyUsedList;
             foreach (AccessListEntry entry in mru.Entries)
             {
                 string mruToken = entry.Token;
                 string mruMetadata = entry.Metadata;
                 IAsyncOperation<StorageFile> asyncOperation = mru.GetFileAsync(mruToken);
-                if (asyncOperation.Status == AsyncStatus.Completed)
+                try
                 {
-                    MenuFlyoutItem mruMenuFlyout = new MenuFlyoutItem();
-                    mruMenuFlyout.Click += mruMenuFlyout_Click;
-                    mruMenuFlyout.Tag = mruToken;
-                    StorageFile file = await asyncOperation;
-                    mruMenuFlyout.Text = file.Path;
-                    RecentFilesFlyout.Items.Add(mruMenuFlyout);
+                    if (RecentFilesFlyout.Items.Count <= 9)
+                    {
+                        if (mru.CheckAccess(await asyncOperation))
+                        {
+                            MenuFlyoutItem mruMenuFlyout = new MenuFlyoutItem();
+                            mruMenuFlyout.Click += mruMenuFlyout_Click;
+                            mruMenuFlyout.Tag = mruToken;
+                            StorageFile file = await asyncOperation;
+                            mruMenuFlyout.Text = file.Path;
+                            RecentFilesFlyout.Items.Add(mruMenuFlyout);
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    StorageApplicationPermissions.MostRecentlyUsedList.Remove(mruToken);
                 }
             }
         }
 
-        private async void NewWindow()
+        private async void NewWindow() 
         {
-            var currentAV = ApplicationView.GetForCurrentView();
-            var newAV = CoreApplication.CreateNewView();
+            CoreApplicationView newAV = CoreApplication.CreateNewView();
             await newAV.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Normal,
                 async () =>
                 {
-                    var newWindow = Window.Current;
-                    var newAppView = ApplicationView.GetForCurrentView();
+                    Window newWindow = Window.Current;
+                    ApplicationView newAppView = ApplicationView.GetForCurrentView();
 
-                    var frame = new Frame();
+                    Frame frame = new Frame();
                     frame.Navigate(typeof(MainPage), "NewWindow");
                     newWindow.Content = frame;
                     newWindow.Activate();
@@ -1538,55 +1871,50 @@ namespace Textie
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(
                         newAppView.Id,
                         ViewSizePreference.UseMinimum,
-                        currentAV.Id,
+                        appView.Id,
                         ViewSizePreference.UseMinimum);
                 });
         }
 
-        private void CloseOneTab(RichEditBoxPivotItem item)
+        private async void CloseOneTab(RichEditBoxPivotItem item)
         {
+            await Task.Delay(200);
+
             string autoSave = localSettings.Values["autoSave"].ToString();
-            if (PivotMain.Items.Count != 1)
+            if (PivotMain.Items.Count > 1)
             {
-                if (item.EditBox.ReadyToSave == true)
+                if (item.EditBox.TextSaveState == RichEditBoxCore.SaveState.TextIsChanged && item.EditBox.Tag != null && autoSave == "0")
                 {
-                    if (item.EditBox.Tag != null && autoSave == "0")
-                    {
-                        //Shows message box when changes of file is not saved
-                        ApiResources.ShowMessageBox("Save changes", "Do you want to save changes?",
-                           async (command) => 
-                            {
-                                await SaveFile(item, (StorageFile)item.EditBox.Tag);
-                                CloseTab(item);
-                            },
+                    //Shows message box when changes of file is not saved
+                    ApiResources.ShowMessageBox("Save changes", "Do you want to save changes?",
+                       async (command) =>
+                        {
+                            await SaveFile(item, (StorageFile)item.EditBox.Tag);
+                            CloseTab(item);
+                        },
 
-                            (command) => 
-                            {
-                                CloseTab(item);
-                            });
-                    }
-                    else if(item.EditBox.Tag == null)
-                    {
-                        //Shows message box when file is not saved
-                        ApiResources.ShowMessageBox("Save file", "Do you want to save \"" +
-                            item.HeaderTextBlock.Text +
-                            "\"?",
-                            (command) =>
-                            {
-                                SaveFileAs(item, true);
-                            },
-
-                            (command) =>
-                            {
-                                CloseTab(item);
-                            });
-                    }
-                    else if (item.EditBox.Tag != null && autoSave == "1")
-                    {
-                        CloseTab(item);
-                    }
+                        (command) =>
+                        {
+                            CloseTab(item);
+                        });
                 }
-                else
+                else if (item.EditBox.TextSaveState == RichEditBoxCore.SaveState.TextIsChanged && item.EditBox.Tag == null)
+                {
+                    //Shows message box when file is not saved
+                    ApiResources.ShowMessageBox("Save file", "Do you want to save \"" +
+                        item.Header +
+                        "\"?",
+                        (command) =>
+                        {
+                            SaveFileAs(item, true);
+                        },
+
+                        (command) =>
+                        {
+                            CloseTab(item);
+                        });
+                }
+                else if (item.EditBox.TextSaveState != RichEditBoxCore.SaveState.TextIsChanged || autoSave == "1" && item.EditBox.Tag != null)
                 {
                     CloseTab(item);
                 }
@@ -1612,7 +1940,7 @@ namespace Textie
 
         private void CloseAllTabs()
         {
-            if (PivotMain.Items.Count == 1 && currentEditBox.ReadyToSave == false)
+            if (PivotMain.Items.Count == 1 && currentEditBox.TextSaveState == RichEditBoxCore.SaveState.TextIsChanged)
             {
                 ClearTabs();
             }
@@ -1634,7 +1962,7 @@ namespace Textie
             {
                 if (item.ListViewItem.File == null && item.ListViewItem.CopiedFile != null)
                 {
-                    if (await unsavedFolder.TryGetItemAsync(item.ListViewItem.CopiedFile.Name) == null)
+                    if (await unsavedFolder.TryGetItemAsync(item.ListViewItem.CopiedFile.Name) != null)
                         await item.ListViewItem.CopiedFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
                 }
             }
@@ -1656,19 +1984,17 @@ namespace Textie
                     {
                         if (item.ListViewItem.CopiedFile == null)
                         {
-                            if (await unsavedFolder.TryGetItemAsync(item.HeaderTextBlock.Text) == null)
-                                await unsavedFolder.CreateFileAsync(item.HeaderTextBlock.Text, CreationCollisionOption.OpenIfExists);
+                            if (await unsavedFolder.TryGetItemAsync(item.Header.ToString()) == null)
+                                await unsavedFolder.CreateFileAsync(item.Header.ToString(), CreationCollisionOption.OpenIfExists);
 
-                            item.ListViewItem.CopiedFile = await unsavedFolder.GetFileAsync(item.HeaderTextBlock.Text);
+                            item.ListViewItem.CopiedFile = await unsavedFolder.GetFileAsync(item.Header.ToString());
 
-                            item.HeaderTextBlock.Text = item.ListViewItem.CopiedFile.Name;
+                            item.Header = item.ListViewItem.CopiedFile.Name;
 
-                            PivotMain.SelectedRichEditBoxItem.ListViewItem.Title = item.HeaderTextBlock.Text;
-
-                            ToolTipService.SetToolTip(item.HeaderTextBlock, item.HeaderTextBlock.Text);
+                            PivotMain.SelectedRichEditBoxItem.ListViewItem.Title = item.Header.ToString();
                         }
 
-                        if (await unsavedFolder.TryGetItemAsync(item.HeaderTextBlock.Text) != null)
+                        if (await unsavedFolder.TryGetItemAsync(item.Header.ToString()) != null)
                             await FileIO.WriteTextAsync(item.ListViewItem.CopiedFile, item.EditBox.CoreText.Text);
                     }
                 }
@@ -1679,13 +2005,13 @@ namespace Textie
         {
             /*
              * On mobile when double click on open button or click on save button
-             * Will be throw exception, because of two async operations in same time
+             * Will be throw exception, because of two async show UI operations in same time
             */
             OpenButton.IsEnabled = false;
             SaveButton.IsEnabled = false;
             SaveAsButton.IsEnabled = false;
 
-            var picker = new FileOpenPicker();
+            FileOpenPicker picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             picker.FileTypeFilter.Add(".txt");
@@ -1709,7 +2035,7 @@ namespace Textie
             picker.FileTypeFilter.Add(".vb");
             picker.FileTypeFilter.Add(".vbs");
 
-            await MainPagePG.Dispatcher.RunAsync(
+            IAsyncAction asyncAction = MainPagePG.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Low,
                 async () =>
                 {
@@ -1725,10 +2051,6 @@ namespace Textie
                     {
                         await OpenFile(file, false);
                     }
-                    else
-                    {
-                        SaveButton.IsEnabled = currentEditBox.ReadyToSave;
-                    }
 
                     OpenButton.IsEnabled = true;
                     SaveAsButton.IsEnabled = true;
@@ -1738,6 +2060,9 @@ namespace Textie
                     unSavedTimer.Start();
                     timer.Start();
                 });
+
+            await asyncAction;
+            asyncAction.Close();
         }
 
         private async Task OpenFile(StorageFile file, bool IsCachedFile)
@@ -1751,64 +2076,84 @@ namespace Textie
                 if (GetFileInTabs(file) == false)
                 {
                     string FileName = Path.GetFileName(file.Path); 
-                    if (PivotMain.Items.Count == 0 || currentEditBox.Document.CanUndo() || currentEditBox.CoreText.Text != "" && currentEditBox.Tag != null)
+                    if (PivotMain.Items.Count == 0 || currentEditBox.Document.CanUndo() || currentEditBox.CoreText.Text != "" && currentEditBox.Tag != null || IsCachedFile)
                     {
                         AddTab(FileName);
                     }
                     else
                     {
-                        var header =
-                            PivotMain.SelectedRichEditBoxItem.HeaderTextBlock;
+                        PivotMain.SelectedRichEditBoxItem.Header = FileName;
 
-                        if (FileName.Length <= 15)
+                        PivotMain.SelectedRichEditBoxItem.ListViewItem.Title = PivotMain.SelectedRichEditBoxItem.Header.ToString();
+                    }
+
+                    DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
+                    if (displayInformation.DiagonalSizeInInches < 5.0 || displayInformation.ResolutionScale > ResolutionScale.Scale400Percent)
+                    {
+                        if (FileName.Length < 11)
                         {
-                            header.Text = FileName;
+                            appView.Title = FileName;
                         }
                         else
                         {
-                            header.Text = string.Format("{0}...", FileName.Substring(0, 15));
+                            appView.Title = string.Format("{0} ... {1}", FileName.Substring(0, 6), FileName.Substring(FileName.Length - 3));
                         }
-
-                        PivotMain.SelectedRichEditBoxItem.ListViewItem.Title = header.Text;
-
-                        ToolTipService.SetToolTip(header, FileName);
                     }
-
-                    var appView = ApplicationView.GetForCurrentView();
-                    appView.Title = FileName;
+                    else
+                    {
+                        if (FileName.Length < 18)
+                        {
+                            appView.Title = FileName;
+                        }
+                        else
+                        {
+                            appView.Title = string.Format("{0} ... {1}", FileName.Substring(0, 13), FileName.Substring(FileName.Length - 3));
+                        }
+                    }
 
                     TitleTextBlock.Text = string.Format("{0} – {1}", appView.Title,
                         Package.Current.DisplayName);
 
-                    await MainPagePG.Dispatcher.RunAsync(
+                    IAsyncAction asyncAction = MainPagePG.Dispatcher.RunAsync(
                         CoreDispatcherPriority.Low,
-                        async () =>
+                        () =>
                         {
-                            var stream = await file.OpenStreamForReadAsync();
-                            using (var inputStream = stream.AsRandomAccessStream())
-                            {
-                                using (var dataReader = new DataReader(inputStream))
-                                {
-                                    var size = inputStream.Size;
-                                    uint numBytesLoaded = await dataReader.LoadAsync((uint)size);
-                                    byte[] fileContent = new byte[dataReader.UnconsumedBufferLength];
-                                    dataReader.ReadBytes(fileContent);
-                                    string text = Encoding.UTF8.GetString(fileContent, 0, fileContent.Length);
-                                    if (file.Path.EndsWith(".rtf"))
-                                    {
-                                        currentEditBox.CoreText.TextRtf = text;
-                                    }
-                                    else
-                                    {
-                                        currentEditBox.CoreText.Text = text;
-                                    }
+                            string text = "";
 
-                                    stream.Dispose();
-                                    inputStream.Dispose();
-                                    dataReader.Dispose();
-                                }
+                            Task.Run(
+                                async () =>
+                                {
+                                    try
+                                    {
+                                        Stream stream = await file.OpenStreamForReadAsync();
+                                        using (IRandomAccessStream inputStream = stream.AsRandomAccessStream())
+                                        {
+                                            using (DataReader dataReader = new DataReader(inputStream))
+                                            {
+                                                ulong size = inputStream.Size;
+                                                uint numBytesLoaded = await dataReader.LoadAsync((uint)size);
+                                                byte[] fileContent = new byte[dataReader.UnconsumedBufferLength];
+                                                dataReader.ReadBytes(fileContent);
+                                                text = Encoding.UTF8.GetString(fileContent, 0, fileContent.Length);
+                                            }
+                                        }
+                                        stream.Dispose();
+                                    }
+                                    catch (Exception) { }
+                                }).Wait();
+
+                            if (file.Path.EndsWith(".rtf"))
+                            {
+                                currentEditBox.CoreText.TextRtf = text;
+                            }
+                            else
+                            {
+                                currentEditBox.CoreText.Text = text;
                             }
                         });
+
+                    await asyncAction;
+                    asyncAction.Close();
 
                     LaunchButton.IsEnabled = false;
 
@@ -1818,18 +2163,26 @@ namespace Textie
                         LaunchButton.IsEnabled = true;
                     }
 
-                    await Task.Delay(200);
-                    currentEditBox.ReadyToSave = false;
-
                     if (IsCachedFile == false)
                     {
-                        var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+                        StorageItemMostRecentlyUsedList mru = StorageApplicationPermissions.MostRecentlyUsedList;
                         string mruToken = mru.Add(file, file.Path, RecentStorageItemVisibility.AppAndSystem);
 
                         if (PivotMain.SelectedRichEditBoxItem.ListViewItem.CopiedFile != null)
                         {
                             await PivotMain.SelectedRichEditBoxItem.ListViewItem.CopiedFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
                         }
+
+                        if (file.Path.EndsWith(".txt") || file.Path.EndsWith(".text") || file.Path.EndsWith(".rtf"))
+                        {
+                            currentEditBox.IsSpellCheckEnabled = true;
+                        }
+                        else
+                        {
+                            currentEditBox.IsSpellCheckEnabled = false;
+                        }
+
+                        currentEditBox.TextSaveState = RichEditBoxCore.SaveState.OpenedFile;
 
                         currentEditBox.Tag = file;
 
@@ -1839,16 +2192,15 @@ namespace Textie
                         FileNameItem.IsEnabled = true;
                         FilePathItem.IsEnabled = true;
 
-                        SaveButton.IsEnabled = currentEditBox.ReadyToSave;
                     }
                     else
                     {
+                        currentEditBox.TextSaveState = RichEditBoxCore.SaveState.TextIsChanged;
+
                         currentEditBox.Tag = null;
 
                         PivotMain.SelectedRichEditBoxItem.ListViewItem.CopiedFile = file;
                         PivotMain.SelectedRichEditBoxItem.ListViewItem.File = null;
-
-                        SaveButton.IsEnabled = true;
                     }
                 }
                 else
@@ -1861,11 +2213,13 @@ namespace Textie
                             PivotMain.SelectedItem = item;
                         }
                     }
-                    SaveButton.IsEnabled = true;
                 }
 
                 unSavedTimer.Start();
                 timer.Start();
+
+                MainGrid.UpdateLayout();
+                currentEditBox.UpdateLayout();
             }
         }
 
@@ -1879,59 +2233,78 @@ namespace Textie
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             string FileName = Path.GetFileName(file.Path);
 
-            var appView = ApplicationView.GetForCurrentView();
-            appView.Title = FileName;
+            item.Header = FileName;
+
+            item.ListViewItem.Title = item.Header.ToString();
+
+            DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
+            if (displayInformation.DiagonalSizeInInches < 5.0 || displayInformation.ResolutionScale > ResolutionScale.Scale400Percent)
+            {
+                if (FileName.Length < 11)
+                {
+                    appView.Title = FileName;
+                }
+                else
+                {
+                    appView.Title = string.Format("{0} ... {1}", FileName.Substring(0, 6), FileName.Substring(FileName.Length - 3));
+                }
+            }
+            else
+            {
+                if (FileName.Length < 18)
+                {
+                    appView.Title = FileName;
+                }
+                else
+                {
+                    appView.Title = string.Format("{0} ... {1}", FileName.Substring(0, 13), FileName.Substring(FileName.Length - 3));
+                }
+            }
 
             TitleTextBlock.Text = string.Format("{0} – {1}", appView.Title,
                 Package.Current.DisplayName);
 
-            await MainPagePG.Dispatcher.RunAsync(
+            IAsyncAction asyncAction = MainPagePG.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Low,
-                async () =>
+                () =>
                 {
-                    using (StorageStreamTransaction transaction = await file.OpenTransactedWriteAsync())
-                    {
-                        using (DataWriter dataWriter = new DataWriter(transaction.Stream))
-                        {
-                            if (file.Path.EndsWith(".rtf"))
-                            {
-                                dataWriter.WriteString(item.EditBox.CoreText.TextRtf);
-                            }
-                            else
-                            {
-                                dataWriter.WriteString(item.EditBox.CoreText.Text);
-                            }
-                            transaction.Stream.Size = await dataWriter.StoreAsync(); // reset stream size to override the file
-                            await transaction.CommitAsync();
+                    string text = "";
 
-                            transaction.Stream.Dispose();
-                            dataWriter.Dispose();
-                        }
+                    if (file.Path.EndsWith(".rtf"))
+                    {
+                        text = item.EditBox.CoreText.TextRtf;
                     }
+                    else
+                    {
+                        text = item.EditBox.CoreText.Text;
+                    }
+
+                    Task.Run(
+                        async () =>
+                        {
+                            try
+                            {
+                                using (StorageStreamTransaction transaction = await file.OpenTransactedWriteAsync())
+                                {
+                                    using (DataWriter dataWriter = new DataWriter(transaction.Stream))
+                                    {
+                                        dataWriter.WriteString(text);
+                                        transaction.Stream.Size = await dataWriter.StoreAsync(); // reset stream size to override the file
+                                        await transaction.CommitAsync();
+                                    }
+                                }
+                            }
+                            catch (Exception) { }
+                        }).Wait();
                 });
 
-            var header = item.HeaderTextBlock;
+            await asyncAction;
+            asyncAction.Close();
 
-            if (FileName.Length <= 15)
-            {
-                header.Text = FileName;
-            }
-            else
-            {
-                header.Text = string.Format("{0}...", FileName.Substring(0, 15));
-            }
-
-            item.ListViewItem.Title = header.Text;
-
-            ToolTipService.SetToolTip(header, FileName);
-
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            StorageItemMostRecentlyUsedList mru = StorageApplicationPermissions.MostRecentlyUsedList;
             string mruToken = mru.Add(file, file.Path, RecentStorageItemVisibility.AppAndSystem);
 
-            await Task.Delay(200);
-
-            item.EditBox.ReadyToSave = false;
-            SaveButton.IsEnabled = currentEditBox.ReadyToSave;
+            item.EditBox.TextSaveState = RichEditBoxCore.SaveState.TextIsUnchanged;
 
             LaunchButton.IsEnabled = false;
 
@@ -1939,6 +2312,15 @@ namespace Textie
                 file.Path.EndsWith(".htm"))
             {
                 LaunchButton.IsEnabled = true;
+            }
+
+            if (file.Path.EndsWith(".txt") || file.Path.EndsWith(".text") || file.Path.EndsWith(".rtf"))
+            {
+                item.EditBox.IsSpellCheckEnabled = true;
+            }
+            else
+            {
+                item.EditBox.IsSpellCheckEnabled = false;
             }
 
             item.EditBox.Tag = file;
@@ -1961,6 +2343,13 @@ namespace Textie
                 {
                     if (item.ListViewItem.CopiedFile == null && item.ListViewItem.File != null)
                     {
+                        if (PivotMain.SelectedRichEditBoxItem == item)
+                        {
+                            SaveButton.IsEnabled = false;
+                        }
+
+                        item.EditBox.TextSaveState = RichEditBoxCore.SaveState.TextIsUnchanged;
+
                         await FileIO.WriteTextAsync(item.ListViewItem.File, item.EditBox.CoreText.Text);
                     }
                 }
@@ -1973,7 +2362,7 @@ namespace Textie
             SaveButton.IsEnabled = false;
             SaveAsButton.IsEnabled = false;
 
-            var picker = new FileSavePicker();
+            FileSavePicker picker = new FileSavePicker();
             picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
             picker.FileTypeChoices.Add("Text Files", new string[] { ".txt", ".text" });
             picker.FileTypeChoices.Add("RTF File", new string[] { ".rtf" });
@@ -1993,7 +2382,7 @@ namespace Textie
             picker.FileTypeChoices.Add("All files", new string[] { "." });
             picker.SuggestedFileName = "New File " + PivotMain.Items.Count;
 
-            await MainPagePG.Dispatcher.RunAsync(
+            IAsyncAction asyncAction = MainPagePG.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Low,
                 async () =>
                 {
@@ -2014,17 +2403,13 @@ namespace Textie
 
                         await SaveFile(item, file);
 
-                        var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+                        StorageItemMostRecentlyUsedList mru = StorageApplicationPermissions.MostRecentlyUsedList;
                         string mruToken = mru.Add(file, file.Path, RecentStorageItemVisibility.AppAndSystem);
 
                         if (SaveCloseTab == true)
                         {
                             CloseTab(item);
                         }
-                    }
-                    else
-                    {
-                        SaveButton.IsEnabled = item.EditBox.ReadyToSave;
                     }
 
                     OpenButton.IsEnabled = true;
@@ -2035,6 +2420,9 @@ namespace Textie
                     unSavedTimer.Start();
                     timer.Start();
                 });
+
+            await asyncAction;
+            asyncAction.Close();
         }
          
         private bool GetFileInTabs(StorageFile file)
@@ -2077,6 +2465,7 @@ namespace Textie
         private async void PinFileToStartMenu()
         {
             StorageFile file = ((StorageFile)currentEditBox.Tag);
+
             if (file != null)
             {
                 StorageLibrary documentsLibrary = await ApiResources.TryAccessLibraryAsync(KnownLibraryId.Documents);
@@ -2115,13 +2504,17 @@ namespace Textie
 
                     if (IsStoredRightFolder == false)
                     {
-                        ApiResources.Notify("Error", "You can pin a file, stored in Documents, Music, Videos, Pictures folders only.");
+                        new UCNotification("Error", "You can pin a file, stored in Documents, Music, Videos, Pictures folders only.").ShowNotification();
                     }
                 }
             }
             else if (currentEditBox.Tag == null)
             {
-                ApiResources.Notify("Save file", string.Format("\"{0}\" is not saved because is not have a saved file.", PivotMain.SelectedRichEditBoxItem.HeaderTextBlock.Text));
+                UCNotification notification = new UCNotification("Save file", string.Format("\"{0}\" is can't pin because is not have a saved file.", PivotMain.SelectedRichEditBoxItem.Header));
+                notification.ToastLaunchArguments = "action=selecttab&tab=" + PivotMain.SelectedRichEditBoxItem.ListViewItem.CopiedFileName.Replace(" ", "_");
+                notification.ToastButtonContent = "Save file";
+                notification.ToastButtonArguments = "action=savefile&file=" + PivotMain.SelectedRichEditBoxItem.ListViewItem.CopiedFileName.Replace(" ", "_");
+                notification.ShowNotification();
             }
         }
 
@@ -2130,6 +2523,23 @@ namespace Textie
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             DataTransferManager.ShowShareUI();
+        }
+
+        private async void SendEmail(StorageFile file)
+        {
+            EmailMessage emailMessage = new EmailMessage();
+            emailMessage.Subject = "Attachment: " + file.Name;
+            emailMessage.Body = "(sent by Textie Editor)";
+            StorageFile attachmentFile = file;
+            if (attachmentFile != null)
+            {
+                RandomAccessStreamReference stream = RandomAccessStreamReference.CreateFromFile(attachmentFile);
+                EmailAttachment attachment = new EmailAttachment(
+                         attachmentFile.Name,
+                         stream);
+                emailMessage.Attachments.Add(attachment);
+            }
+            await EmailManager.ShowComposeNewEmailAsync(emailMessage);
         }
 
         private void ZoomOut()
@@ -2208,12 +2618,12 @@ namespace Textie
 
         private void ShowFullScreen()
         {
-            var applicationView = ApplicationView.GetForCurrentView();
-
+            ApplicationView applicationView = ApplicationView.GetForCurrentView();
             applicationView.TryEnterFullScreenMode();
 
             SecondaryCommands.Hide();
         }
+
         #endregion
 
         #region "Key Accelerators"
@@ -2273,18 +2683,55 @@ namespace Textie
                 KeyboardAccelerator F11 = new KeyboardAccelerator();
                 F11.Key = VirtualKey.F11;
                 FullScreenButton.KeyboardAccelerators.Add(F11);
+
+                KeyboardAccelerator Alt = new KeyboardAccelerator();
+                Alt.Key = VirtualKey.Menu;
+                Alt.Invoked += Alt_Invoked;
+                MainCommandBar.KeyboardAccelerators.Add(Alt);
+
             }
+        }
+
+        private void Mid_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            ApplicationDataContainer localSettings =
+                ApplicationData.Current.LocalSettings;
+            string SelectionText = currentEditBox.Document.Selection.Text;
+            string SearchEngine = localSettings.Values["SearchEngine"].ToString();
+            if ((SelectionText.StartsWith("http://") || SelectionText.StartsWith("https://")) && SelectionText.Contains("."))
+            {
+                WebResources.Navigate(SelectionText);
+            }
+            else
+            {
+                if (SearchEngine == "Bing")
+                {
+                    WebResources.Navigate("https://www.bing.com/search?q=" + SelectionText);
+                }
+                else if (SearchEngine == "Google")
+                {
+                    WebResources.Navigate("https://www.google.com/search?q=" + SelectionText);
+                }
+                else if (SearchEngine == "Yahoo")
+                {
+                    WebResources.Navigate("https://search.yahoo.com/search?p=" + SelectionText);
+                }
+            }
+        }
+
+        private void Alt_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            SecondaryCommands.ShowAt(EditButton);
         }
         #endregion
 
         #region Design Methods
         private void MakeDesign()
         {
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             string theme = localSettings.Values["theme"].ToString();
             string titleBarColor = localSettings.Values["titleBarColor"].ToString();
 
-            var BasicBackBrush =
+            Brush BasicBackBrush =
                 Resources["ApplicationPageBackgroundThemeBrush"] as Brush;
 
             if (titleBarColor == "0")
@@ -2300,7 +2747,7 @@ namespace Textie
             Style FlyoutStyle = new Style { TargetType = typeof(FlyoutPresenter) };
 
             FlyoutStyle.Setters.Add(new Setter(PaddingProperty,
-                1));
+                0));
             FlyoutStyle.Setters.Add(new Setter(RequestedThemeProperty,
                 MainGrid.RequestedTheme));
 
@@ -2309,23 +2756,19 @@ namespace Textie
                 //Adds reveal highlight
                 if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.RevealBrush"))
                 {
-                    var AppBarButtonReveal =
+                    Style AppBarButtonReveal =
                         Resources["AppBarButtonRevealStyle"] as Style;
-                    var AppBarButtonOverflowReveal =
-                        Resources["RightAlignRevealAppBarButton"] as Style;
-                    var AppBarToggleOverflowReveal =
-                        Resources["RightAlignRevealAppBarToggle"] as Style;
+                    Style AppBarButtonOverflowReveal =
+                        Application.Current.Resources["RightAlignRevealAppBarButton"] as Style;
+                    Style AppBarToggleOverflowReveal =
+                        Application.Current.Resources["RightAlignRevealAppBarToggle"] as Style;
 
-                    var ButtonReveal = Resources["ButtonRevealStyle"] as Style;
+                    Style ButtonReveal = Resources["ButtonRevealStyle"] as Style;
                     UndoTitleBarButton.Style = ButtonReveal;
                     RedoTitleBarButton.Style = ButtonReveal;
 
-                    MainCommandBar.Style =
-                        Resources["CommandBarRevealStyle"] as Style;
-
-                    AllTabsButton.Style = AppBarButtonReveal;
-
                     NewWindowButton.Style = AppBarButtonReveal;
+                    AllTabsButton.Style = AppBarButtonReveal;
                     AddTabButton2.Style = AppBarButtonReveal;
                     AllTabsButton2.Style = AppBarButtonReveal;
                     CloseTabButton2.Style = AppBarButtonReveal;
@@ -2342,78 +2785,65 @@ namespace Textie
                     AutoSaveToggle.Style = AppBarToggleOverflowReveal;
                     PrintButton.Style = AppBarButtonOverflowReveal;
                     ShareButton.Style = AppBarButtonOverflowReveal;
+                    PinButton.Style = AppBarButtonOverflowReveal;
                     LaunchButton.Style = AppBarButtonOverflowReveal;
                     ZoomOutButton.Style = AppBarButtonOverflowReveal;
                     ZoomInButton.Style = AppBarButtonOverflowReveal;
                     FullScreenButton.Style = AppBarButtonOverflowReveal;
                     SettingsButton.Style = AppBarButtonOverflowReveal;
+
+                    NewWindowButtonStyle.Value = AppBarButtonOverflowReveal;
+                    NewWindowButtonStyleX.Value = AppBarButtonOverflowReveal;
                 }
 
                 //Adds transparency on flyouts
-                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
                 {
-                    AcrylicBackdrop commandrBarBackDrop = new AcrylicBackdrop();
-
-                    AcrylicBackdrop allTabsBackDrop = new AcrylicBackdrop();
-
-                    AcrylicBackdrop secondaryCommandsBackDrop = new AcrylicBackdrop();
-
-                    AcrylicBackdrop findBackDrop = new AcrylicBackdrop();
-
-                    AcrylicBackdrop replaceBackDrop = new AcrylicBackdrop();
-
-                    AcrylicBackdrop extensionsBackDrop = new AcrylicBackdrop();
-
-                    string TransparencyBool = localSettings.Values["transparency"].ToString();
-                    if (TransparencyBool == "1")
+                    UCAcrylicBrush AcrylicSystemBrush = new UCAcrylicBrush()
                     {
-                        Style AcrylicCommandBarStyle = new Style { TargetType = typeof(CommandBar) };
-                        AcrylicCommandBarStyle.Setters.Add(new Setter(BackgroundProperty,
-                            Colors.Transparent));
+                        BackgroundSource = CustomAcrylicBackgroundSource.Hostbackdrop,
+                        TintColor = Color.FromArgb(255, 31, 31, 31),
+                        FallbackColor = Color.FromArgb(255, 50, 50, 50)
+                    };
 
-                        MainCommandBar.Style = AcrylicCommandBarStyle;
+                    UCAcrylicBrush AcrylicElementBrush = new UCAcrylicBrush()
+                    {
+                        BackgroundSource = CustomAcrylicBackgroundSource.Backdrop
+                    };
 
-                        MainCommandBarGrid.Children.Clear();
-                        MainCommandBarGrid.Children.Add(commandrBarBackDrop);
-                        MainCommandBarGrid.Children.Add(MainCommandBar);
+                    object SystemAccentColor = Resources["SystemAccentColor"];
 
-                        FlyoutStyle.Setters.Add(new Setter(BackgroundProperty,
-                            Colors.Transparent));
+                    byte[] AccentRGB = { ((Color)SystemAccentColor).R, ((Color)SystemAccentColor).G, ((Color)SystemAccentColor).B };
 
-                        AllTabsGrid.Children.Clear();
-                        AllTabsGrid.Children.Add(allTabsBackDrop);
-                        AllTabsGrid.Children.Add(AllTabsPanel);
+                    UCAcrylicBrush AcrylicAccentBrush = new UCAcrylicBrush()
+                    {
+                        BackgroundSource = CustomAcrylicBackgroundSource.Hostbackdrop,
+                        TintColor = Color.FromArgb(255, AccentRGB[0], AccentRGB[1], AccentRGB[2]),
+                        FallbackColor = Color.FromArgb(255, AccentRGB[0], AccentRGB[1], AccentRGB[2])
+                    };
 
-                        SecondaryCommandsGrid.Children.Clear();
-                        SecondaryCommandsGrid.Children.Add(secondaryCommandsBackDrop);
-                        SecondaryCommandsGrid.Children.Add(SecondaryCommandsPanel);
-
-                        FindGrid.Children.Clear();
-                        FindGrid.Children.Add(findBackDrop);
-                        FindGrid.Children.Add(FindPanel);
-
-                        ReplaceGrid.Children.Clear();
-                        ReplaceGrid.Children.Add(replaceBackDrop);
-                        ReplaceGrid.Children.Add(ReplacePanel);
-
-                        SolidColorBrush transparentBrush = new SolidColorBrush(Colors.Transparent);
-                        Extensions.PaneBackground = transparentBrush;
-                        ExtensionsPaneGrid.Children.Clear();
-                        ExtensionsPaneGrid.Children.Add(extensionsBackDrop);
+                    UISettings DefaultTheme = new UISettings();
+                    string uiTheme = DefaultTheme.GetColorValue(UIColorType.Background).ToString();
+                    if (uiTheme == "#FFFFFFFF")
+                    {
+                        AcrylicSystemBrush.TintColor = Color.FromArgb(255, 255, 255, 255);
+                        AcrylicSystemBrush.FallbackColor = Color.FromArgb(255, 230, 230, 230);
                     }
-                }
 
-                //Adds acrylic brush on window
-                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
-                {
-                    var AcrylicSystemBrush =
-                        Resources["SystemControlChromeMediumAcrylicWindowMediumBrush"] as AcrylicBrush;
+                    AcrylicElementBrush.TintColor = AcrylicSystemBrush.TintColor;
+                    AcrylicElementBrush.FallbackColor = AcrylicSystemBrush.FallbackColor;
 
-                    var AcrylicElementBrush =
-                        Resources["SystemControlChromeMediumAcrylicElementMediumBrush"] as AcrylicBrush;
+                    Style AcrylicCommandBarStyle = new Style { TargetType = typeof(CommandBar) };
+                    AcrylicCommandBarStyle.Setters.Add(new Setter(BackgroundProperty,
+                        AcrylicElementBrush));
 
-                    var AcrylicAccentBrush =
-                        Resources["SystemControlAccentAcrylicWindowAccentMediumHighBrush"] as AcrylicBrush;
+                    MainCommandBar.Style = AcrylicCommandBarStyle;
+
+                    FlyoutStyle.Setters.Add(new Setter(BackgroundProperty,
+                        AcrylicElementBrush));
+
+                    SolidColorBrush transparentBrush = new SolidColorBrush(Colors.Transparent);
+                    Extensions.PaneBackground = AcrylicElementBrush;
 
                     titleBar.BackgroundColor = Colors.Transparent;
                     titleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -2447,6 +2877,7 @@ namespace Textie
 
                     InsertSelection.MenuFlyoutPresenterStyle = AcrylicMenuFlyoutStyle;
                     FormatSelection.MenuFlyoutPresenterStyle = AcrylicMenuFlyoutStyle;
+                    RecentFilesFlyout.MenuFlyoutPresenterStyle = AcrylicMenuFlyoutStyle;
                 }
             }
 
@@ -2457,14 +2888,18 @@ namespace Textie
         }
 
         private void BasicAccentBrush()
-        {
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            
-            var BasicAccentBrush =
+        {            
+            Brush BasicAccentBrush =
                 Resources["SystemControlBackgroundAccentBrush"] as Brush;
 
             titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.BackgroundColor = Resources["SystemAccentColor"] as Color?;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                StatusBar statusBar = StatusBar.GetForCurrentView();
+                statusBar.ForegroundColor = Colors.White;
+            }
+
             LeftAppTitleBar.RequestedTheme = ElementTheme.Dark;
             LeftAppTitleBar.Background = BasicAccentBrush;
             MiddleAppTitleBar.RequestedTheme = ElementTheme.Dark;

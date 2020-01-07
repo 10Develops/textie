@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Text;
+﻿using Windows.UI.Text;
 using Windows.Storage;
+using Windows.ApplicationModel.DataTransfer;
+using System;
 
 namespace Textie
 {
@@ -13,10 +10,13 @@ namespace Textie
         RichEditBoxCore _core;
 
         ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-    
+
+        public ICoreTextSelection Selection;
+
         public RichEditBoxCoreText(RichEditBoxCore core)
         {
             _core = core;
+            Selection = new ICoreTextSelection(_core);
         }
 
         string _text;
@@ -119,9 +119,65 @@ namespace Textie
             }
         }
 
+        public void Cut()
+        {
+            Copy();
+            _core.Document.Selection.Text = string.Empty;
+        }
+
+        public void Copy()
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(_core.Document.Selection.Text);
+            Clipboard.SetContent(dataPackage);
+        }
+
+        public async void Paste()
+        {
+            DataPackageView dataPackageView = Clipboard.GetContent();
+            if (dataPackageView.Contains(StandardDataFormats.Text))
+            {
+                string text = await dataPackageView.GetTextAsync();
+                // To output the text from this example, you need a TextBlock control
+                _core.Document.Selection.SetText(TextSetOptions.None, text);
+                _core.Document.Selection.SetRange(_core.Document.Selection.EndPosition, _core.Document.Selection.EndPosition);
+            }
+        }
+
         public void SelectAll()
         {
             _core.Document.Selection.SetRange(0, Text.Length);
+        }
+    }
+
+    public class ICoreTextSelection
+    {
+        RichEditBoxCore _core;
+
+        public ICoreTextSelection(RichEditBoxCore core)
+        {
+            _core = core;
+        }
+
+        string _text;
+        public string Text
+        {
+            get
+            {
+                _core.Document.Selection.GetText(TextGetOptions.None, out _text);
+
+                return _text;
+            }
+        }
+
+        public bool IsNumbersOnly()
+        {
+            foreach (char c in _core.Document.Selection.Text)
+            {
+                if (!char.IsDigit(c))
+                    return false;
+            }
+            return true;
         }
     }
 }

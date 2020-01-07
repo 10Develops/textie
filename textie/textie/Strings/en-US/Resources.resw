@@ -307,7 +307,7 @@
     <value>Vibration is not available in this device.</value>
   </data>
   <data name="VibrateToggleSwitch.Header" xml:space="preserve">
-    <value>Vibrate when edit menu opens</value>
+    <value>Vibrate on context menu opening</value>
   </data>
   <data name="VibrationTextBlock.Text" xml:space="preserve">
     <value>Vibration</value>
@@ -383,5 +383,23 @@
   </data>
   <data name="UnsavedOnlyHotExitComboBoxItem.Content" xml:space="preserve">
     <value>Unsaved files only</value>
+  </data>
+  <data name="CloseTabItem.Text" xml:space="preserve">
+    <value>Close tab</value>
+  </data>
+  <data name="SendFileEmailMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Send File to Email</value>
+  </data>
+  <data name="BottomTabBarPositionComboBox.Content" xml:space="preserve">
+    <value>Bottom</value>
+  </data>
+  <data name="TabBarPositionTextBlock.Text" xml:space="preserve">
+    <value>Choose Tab bar position</value>
+  </data>
+  <data name="TabBarTextBlock.Text" xml:space="preserve">
+    <value>Tab Bar</value>
+  </data>
+  <data name="TopTabBarPositionComboBox.Content" xml:space="preserve">
+    <value>Top</value>
   </data>
 </root>

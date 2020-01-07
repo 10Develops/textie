@@ -21,7 +21,6 @@
                 <StackPanel>
                     <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Beta features"/>
                     <StackPanel>
-                        <ToggleSwitch>Recent Files</ToggleSwitch>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

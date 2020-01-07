@@ -305,7 +305,7 @@
     <value>Թրթռումն առկա չէ այս սարքավորումում:</value>
   </data>
   <data name="VibrateToggleSwitch.Header" xml:space="preserve">
-    <value>Թրթռալ երբ բացվում է խմբագրման ցուցակը</value>
+    <value>Թրթռալ երբ բացվում է համտեքստի ցուցակը</value>
   </data>
   <data name="VibrationTextBlock.Text" xml:space="preserve">
     <value>Թրթռում</value>
@@ -384,5 +384,23 @@
   </data>
   <data name="UnsavedOnlyHotExitComboBoxItem.Content" xml:space="preserve">
     <value>Միայն չպահված ֆայլերը</value>
+  </data>
+  <data name="CloseTabItem.Text" xml:space="preserve">
+    <value>Փակել ներդիրը</value>
+  </data>
+  <data name="SendFileEmailMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Ուղարկել ֆայլը էլ. փոստին</value>
+  </data>
+  <data name="BottomTabBarPositionComboBox.Content" xml:space="preserve">
+    <value>Ներքև</value>
+  </data>
+  <data name="TabBarPositionTextBlock.Text" xml:space="preserve">
+    <value>Ընտրեք ներդիրադաշտի դիրքը</value>
+  </data>
+  <data name="TabBarTextBlock.Text" xml:space="preserve">
+    <value>Ներդիրադաշտ</value>
+  </data>
+  <data name="TopTabBarPositionComboBox.Content" xml:space="preserve">
+    <value>Վերև</value>
   </data>
 </root>

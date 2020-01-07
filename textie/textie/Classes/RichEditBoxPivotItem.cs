@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
+﻿using System.ComponentModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -12,23 +6,18 @@ namespace Textie
 {
     public class RichEditBoxPivotItem : PivotItem
     {
-        private TextBlock _headerTextBlock;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private RichEditBoxCore _editBox;
         private Item _listViewItem;
 
-        public RichEditBoxPivotItem() : this(new TextBlock(), new Item(), new RichEditBoxCore())
+        public RichEditBoxPivotItem() : this(new Item(), new RichEditBoxCore())
         {
 
         }
 
-        public RichEditBoxPivotItem(TextBlock headerTextBlock, Item listViewItem, RichEditBoxCore editBox)
+        public RichEditBoxPivotItem(Item listViewItem, RichEditBoxCore editBox)
         {
-            headerTextBlock.FontSize = 18;
-            Header = headerTextBlock;
-            _headerTextBlock = headerTextBlock;
-
-            headerTextBlock.CanDrag = true;
-
             listViewItem.PivotItem = this;
             _listViewItem = listViewItem;
 
@@ -37,14 +26,6 @@ namespace Textie
             _editBox = editBox;
 
             Padding = new Thickness(0, 0, 0, 0);
-        }
-
-        public TextBlock HeaderTextBlock
-        {
-            get
-            {
-                return _headerTextBlock;
-            }
         }
 
         public Item ListViewItem
@@ -60,6 +41,29 @@ namespace Textie
             get
             {
                 return _editBox;
+            }
+        }
+
+        public new object Header
+        {
+            get
+            {
+                return base.Header;
+            }
+            set
+            {
+                base.Header = value;
+                OnPropertyChanged("Header");
+            }
+        }
+
+        // Create the OnPropertyChanged method to raise the event
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
             }
         }
     }

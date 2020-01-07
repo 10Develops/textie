@@ -10,6 +10,8 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel.Core;
+using Windows.Graphics.Display;
+using UnitedCodebase.Brushes;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -26,26 +28,56 @@ namespace Textie
         CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
         ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
 
+        ApplicationView appView = ApplicationView.GetForCurrentView();
+
         int ClickCounter = 0;
 
         public SettingsPage()
         {
             this.InitializeComponent();
 
-            coreTitleBar.LayoutMetricsChanged += coreTitleBar_LayoutMetricsChanged;
+            Window.Current.CoreWindow.SizeChanged += CoreWindow_SizeChanged;
+
+            this.NavigationCacheMode = NavigationCacheMode.Required;
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
             {
                 if (titleBar != null)
                 {
-                    SettingsContentGrid.Margin = new Thickness(0, 32.4, 0, 0);
-                    Window.Current.SetTitleBar(MiddleAppTitleBar);
-                    MiddleAppTitleBar.Visibility = Visibility.Visible;
+                    SettingsContentGrid.Margin = new Thickness(0, coreTitleBar.Height, 0, 0);
+                    SettingsTextBarBlock.Margin = new Thickness(0, 5.5, 64, 0);
+
+                    MiddleAppTitleBar.Margin = new Thickness(64, 0, 0, 0);
+                    MiddleAppTitleBar.Height = coreTitleBar.Height;
+
                     LeftAppTitleBar.Visibility = Visibility.Visible;
+
+                    Window.Current.SetTitleBar(MiddleAppTitleBar);
                 }
             }
 
-            this.NavigationCacheMode = NavigationCacheMode.Required;
+            coreTitleBar.LayoutMetricsChanged += coreTitleBar_LayoutMetricsChanged;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                StatusBar statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    statusBar.BackgroundColor = Colors.Transparent;
+                    statusBar.BackgroundOpacity = 0;
+
+                    SettingsTextBarBlock.FontSize = 13;
+                    SettingsTextBarBlock.Margin = new Thickness(23, 0.6, 30, 0);
+                    MiddleAppTitleBar.Margin = new Thickness(0, -statusBar.OccludedRect.Height, 0, 0);
+                    MiddleAppTitleBar.Height = statusBar.OccludedRect.Height;
+
+                    SettingsContentGrid.Margin = new Thickness(0, statusBar.OccludedRect.Top, 0, 0);
+
+                    LeftAppTitleBar.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            appView.VisibleBoundsChanged += appView_VisibleBoundsChanged;
 
             MakeDesign();
 
@@ -57,16 +89,84 @@ namespace Textie
             };
         }
 
+        private void coreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            SettingsContentGrid.Margin = new Thickness(0, sender.Height, 0, 0);
+
+            SettingsTextBarBlock.Margin = new Thickness(0, 5.5, 64, 0);
+
+            MiddleAppTitleBar.Margin = new Thickness(64, 0, 0, 0);
+            MiddleAppTitleBar.Height = sender.Height;
+        }
+
+        private void appView_VisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+
+                MiddleAppTitleBar.Height = statusBar.OccludedRect.Height;
+                MiddleAppTitleBar.Width = statusBar.OccludedRect.Width;
+
+                SettingsTextBarBlock.Visibility = Visibility.Collapsed;
+
+                DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
+                if (displayInformation.CurrentOrientation == DisplayOrientations.Landscape)
+                {
+                    MiddleAppTitleBar.HorizontalAlignment = HorizontalAlignment.Left;
+                    MiddleAppTitleBar.Margin = new Thickness(-MiddleAppTitleBar.Width, -sender.VisibleBounds.Top, 0, -sender.VisibleBounds.Bottom);
+                }
+                else if (displayInformation.CurrentOrientation == DisplayOrientations.LandscapeFlipped)
+                {
+                    MiddleAppTitleBar.HorizontalAlignment = HorizontalAlignment.Right;
+                    MiddleAppTitleBar.Margin = new Thickness(0, -sender.VisibleBounds.Top, -MiddleAppTitleBar.Width, -sender.VisibleBounds.Bottom);
+                }
+                else
+                {
+                    MiddleAppTitleBar.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    MiddleAppTitleBar.Margin = new Thickness(0, -statusBar.OccludedRect.Height, 0, 0);
+                    SettingsTextBarBlock.Visibility = Visibility.Visible;
+                }
+
+                SettingsContentGrid.Margin = new Thickness(0, statusBar.OccludedRect.Top, 0, 0);
+            }
+        }
+
+        private void CoreWindow_SizeChanged(CoreWindow sender, WindowSizeChangedEventArgs args)
+        {
+            var appView = ApplicationView.GetForCurrentView();
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
+            {
+                var titleBar = appView.TitleBar;
+                if (titleBar != null)
+                {
+                    SettingsContentGrid.Margin = new Thickness(0, coreTitleBar.Height, 0, 0);
+                }
+            }
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    SettingsContentGrid.Margin = new Thickness(0, statusBar.OccludedRect.Top, 0, 0);
+                }
+            }
+        }
+
         private void CurrentView_BackRequested(object sender, BackRequestedEventArgs e)
         {
             On_BackRequested();
             e.Handled = true;
         }
 
-        private void coreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs args)
         {
-            MiddleAppTitleBar.Margin = new Thickness(64, 0, 0, 0);
-            MiddleAppTitleBar.Height = sender.Height;
+            if (args.CurrentPoint.Properties.IsXButton1Pressed)
+            {
+                On_BackRequested();
+                args.Handled = true;
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -82,6 +182,7 @@ namespace Textie
             }
 
             currentView.BackRequested += CurrentView_BackRequested;
+            Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -156,6 +257,16 @@ namespace Textie
                 AccentColorRadioButton.IsChecked = true;
             }
 
+            string hotExit = localSettings.Values["hotExit"].ToString();
+            if (hotExit == "0")
+            {
+                HotExitComboBox.SelectedItem = NoneHotExitComboBoxItem;
+            }
+            else if (hotExit == "1")
+            {
+                HotExitComboBox.SelectedItem = UnsavedOnlyHotExitComboBoxItem;
+            }
+
             /*
             string highContrast = localSettings.Values["highContrast"].ToString();
             if (highContrast == "1")
@@ -197,8 +308,7 @@ namespace Textie
                 YahooRadioButton.IsChecked = true;
             }
 
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3)
-                && ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+            if (ApiInformation.IsTypePresent("Windows.Phone.PhoneContract"))
             {
                 string VibrateBool = localSettings.Values["vibrate"].ToString();
                 if (VibrateBool == "1")
@@ -234,22 +344,22 @@ namespace Textie
                 TrimNewLinesComboBox.SelectedItem = TrimBothTrimNewLinesComboBoxItem;
             }
 
-            string hotExit = localSettings.Values["hotExit"].ToString();
-            if (hotExit == "0")
+            string TabBarPosition = localSettings.Values["TabBarPosition"].ToString();
+            if (TabBarPosition == "0")
             {
-                HotExitComboBox.SelectedItem = NoneHotExitComboBoxItem;
+                TabBarPositionComboBox.SelectedItem = TopTabBarPositionComboBox;
             }
-            else if (hotExit == "1")
+            else if (TabBarPosition == "1")
             {
-                HotExitComboBox.SelectedItem = UnsavedOnlyHotExitComboBoxItem;
+                TabBarPositionComboBox.SelectedItem = BottomTabBarPositionComboBox;
             }
 
             Package package = Package.Current;
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
-            ProgramVersionTextBlock.Text = string.Format("{0} {1} {2}.{3}.{4}.{5}", package.DisplayName, 
-                packageId.Architecture, version.Major, version.Minor, version.Build, version.Revision);
-            CopyrightTextBlock.Text = string.Format("© 2018-2019 {0}", package.PublisherDisplayName);
+            ProgramVersionTextBlock.Text = string.Format("{0} {1} {2}.{3}.{4}.{5}", package.DisplayName + "_textieRelease", 
+                UnitedCodebase.Classes.DeviceDetails.ProcessorArchitecture, version.Major, version.Minor, version.Build, version.Revision);
+            CopyrightTextBlock.Text = string.Format("© 2019 {0}", package.PublisherDisplayName);
 
             string FlagsBool = localSettings.Values["flagsEnabled"].ToString();
             if(FlagsBool == "1")
@@ -349,6 +459,28 @@ namespace Textie
             }
 
             localSettings.Values["titleBarColor"] = "1";
+        }
+
+        private void TabBarPositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string TabBarPosition = localSettings.Values["TabBarPosition"].ToString();
+            if (TopTabBarPositionComboBox.IsSelected == true && TabBarPosition == "1")
+            {
+                NoteChangeTextBlock.Visibility = Visibility.Visible;
+            }
+            else if (BottomTabBarPositionComboBox.IsSelected == true && TabBarPosition == "0")
+            {
+                NoteChangeTextBlock.Visibility = Visibility.Visible;
+            }
+
+            if (TopTabBarPositionComboBox.IsSelected == true)
+            {
+                localSettings.Values["TabBarPosition"] = "0";
+            }
+            else if (BottomTabBarPositionComboBox.IsSelected == true)
+            {
+                localSettings.Values["TabBarPosition"] = "1";
+            }
         }
 
         private void HighContrastToggleSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -490,18 +622,39 @@ namespace Textie
                 BasicAccentBrush();
             }
 
-            SettingsContentGrid.Background = BasicBackBrush;
-
             if (theme == "WD")
             {
-                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+                //Adds transparency on flyouts
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
                 {
-                    var AcrylicSystemBrush =
-                        Resources["SystemControlChromeMediumAcrylicWindowMediumBrush"] as AcrylicBrush;
+                    UCAcrylicBrush AcrylicSystemBrush = new UCAcrylicBrush()
+                    {
+                        BackgroundSource = CustomAcrylicBackgroundSource.Hostbackdrop,
+                        TintColor = Color.FromArgb(255, 31, 31, 31),
+                        FallbackColor = Color.FromArgb(255, 50, 50, 50)
+                    };
 
-                    var AcrylicAccentBrush =
-                        Resources["SystemControlAccentAcrylicWindowAccentMediumHighBrush"] as AcrylicBrush;
+                    var SystemAccentColor = Resources["SystemAccentColor"];
 
+                    byte[] AccentRGB = { ((Color)SystemAccentColor).R, ((Color)SystemAccentColor).G, ((Color)SystemAccentColor).B };
+
+                    UCAcrylicBrush AcrylicAccentBrush = new UCAcrylicBrush()
+                    {
+                        BackgroundSource = CustomAcrylicBackgroundSource.Hostbackdrop,
+                        TintColor = Color.FromArgb(255, AccentRGB[0], AccentRGB[1], AccentRGB[2]),
+                        FallbackColor = Color.FromArgb(255, AccentRGB[0], AccentRGB[1], AccentRGB[2])
+                    };
+
+                    var DefaultTheme = new UISettings();
+                    var uiTheme = DefaultTheme.GetColorValue(UIColorType.Background).ToString();
+                    if (uiTheme == "#FFFFFFFF")
+                    {
+                        AcrylicSystemBrush.TintColor = Color.FromArgb(255, 255, 255, 255);
+                        AcrylicSystemBrush.FallbackColor = Color.FromArgb(255, 230, 230, 230);
+                    }
+
+                    titleBar.BackgroundColor = Colors.Transparent;
+                    titleBar.ButtonBackgroundColor = Colors.Transparent;
                     if (titleBarColor == "0")
                     {
                         LeftAppTitleBar.Background = AcrylicSystemBrush;
@@ -509,7 +662,10 @@ namespace Textie
                     }
                     else
                     {
+                        titleBar.ButtonForegroundColor = Colors.White;
                         titleBar.BackgroundColor = Resources["SystemAccentColor"] as Color?;
+                        LeftAppTitleBar.RequestedTheme = ElementTheme.Dark;
+                        LeftAppTitleBar.Background = AcrylicAccentBrush;
                         MiddleAppTitleBar.RequestedTheme = ElementTheme.Dark;
                         MiddleAppTitleBar.Background = AcrylicAccentBrush;
                     }
@@ -517,8 +673,13 @@ namespace Textie
                     string TransparencyBool = localSettings.Values["transparency"].ToString();
                     if (TransparencyBool == "1")
                     {
-                        SettingsContentGrid.Background = AcrylicSystemBrush;
+                        SettingsGridMain.Background = AcrylicSystemBrush;
                     }
+                }
+
+
+                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+                {
                 }
             }
         }
@@ -527,10 +688,17 @@ namespace Textie
         {
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
 
-            var BasicAccentBrush = Resources["SystemControlBackgroundAccentBrush"] as Brush;
+            var BasicAccentBrush =
+                Resources["SystemControlBackgroundAccentBrush"] as Brush;
 
             titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.BackgroundColor = Resources["SystemAccentColor"] as Color?;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.ForegroundColor = Colors.White;
+            }
+
             LeftAppTitleBar.RequestedTheme = ElementTheme.Dark;
             LeftAppTitleBar.Background = BasicAccentBrush;
             MiddleAppTitleBar.RequestedTheme = ElementTheme.Dark;

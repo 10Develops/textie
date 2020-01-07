@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using System.IO;
-using Windows.Storage;
-using Windows.Storage.Streams;
+﻿using Windows.UI.Xaml.Controls;
+
 namespace Textie
 {
     public class RichEditBoxPivot : Pivot

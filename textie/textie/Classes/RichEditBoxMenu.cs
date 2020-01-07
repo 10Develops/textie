@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
@@ -14,6 +10,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using UnitedCodebase.Classes;
 
 namespace Textie
 {
@@ -73,7 +70,7 @@ namespace Textie
             }
         }
 
-        public class RichEditBoxContextFlyout : MenuFlyout
+        public class RichEditBoxContextFlyout : UCMenuFlyout
         {
             RichEditBoxCore _core;
 
@@ -89,12 +86,11 @@ namespace Textie
             MenuFlyoutItem UppercaseButton;
             MenuFlyoutItem LowercaseButton;
             MenuFlyoutSeparator SearchSeparator;
-            MenuFlyoutItem SearchButton;
+            public MenuFlyoutItem SearchButton;
 
             public RichEditBoxContextFlyout()
             {
                 ResourceLoader loader = ResourceLoader.GetForCurrentView();
-
                 Opened += RichEditBoxContextFlyout_Opened;
                 Closed += RichEditBoxContextFlyout_Closed;
 
@@ -199,15 +195,10 @@ namespace Textie
 
             private async void RichEditBoxContextFlyout_Opened(object sender, object e)
             {
-                string SelectionText = _core.Document.Selection.Text;
-                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
-                {
-                     if (Target == _core)
-                     {
-                        ApiResources.Vibrate(60);
-                     }
-                }
+                ToolTipService.SetToolTip(_core, null);
 
+                string SelectionText = _core.Document.Selection.Text;
+                startPos = _core.Document.Selection.StartPosition;
                 var CanCopy = _core.Document.CanCopy();
                 if (CanCopy && SelectionText != string.Empty)
                 {
@@ -239,9 +230,10 @@ namespace Textie
                     CutCopyPasteSeparator.Visibility = Visibility.Collapsed;
                 }
 
-                ToolTipService.SetToolTip(_core, null);
+                UppercaseButton.Visibility = Visibility.Collapsed;
+                LowercaseButton.Visibility = Visibility.Collapsed;
 
-                if (SelectionText != string.Empty)
+                if (!string.IsNullOrEmpty(SelectionText))
                 {
                     SearchSeparator.Visibility = Visibility.Visible;
                     SearchButton.Visibility = Visibility.Visible;
@@ -284,17 +276,16 @@ namespace Textie
                         SelectionText.Replace("\r", " "));
                     }
 
-                    UppercaseButton.Visibility = Visibility.Visible;
-                    LowercaseButton.Visibility = Visibility.Visible;
-
+                    if (!(_core.CoreText.Selection.IsNumbersOnly() || string.IsNullOrWhiteSpace(SelectionText)))
+                    {
+                        UppercaseButton.Visibility = Visibility.Visible;
+                        LowercaseButton.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
                     SearchSeparator.Visibility = Visibility.Collapsed;
                     SearchButton.Visibility = Visibility.Collapsed;
-
-                    UppercaseButton.Visibility = Visibility.Collapsed;
-                    LowercaseButton.Visibility = Visibility.Collapsed;
 
                     HighlightButton.Visibility = Visibility.Collapsed;
                     RemoveHighlightButton.Visibility = Visibility.Collapsed;
@@ -318,14 +309,70 @@ namespace Textie
                     CaseSeparator.Visibility = Visibility.Collapsed;
                 }
 
-                await Task.Delay(100);
+                _core.KeyDown += _core_KeyDown;
+                _core.SelectionChanged += _core_SelectionChanged;
+
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
+                {
+                    if (Target is UCCommandBar)
+                    {
+                        _core.PreventKeyboardDisplayOnProgrammaticFocus = true;
+                    }
+                }
+                else
+                {
+                    _core.PreventKeyboardDisplayOnProgrammaticFocus = true;
+
+                    if (InputPane.GetForCurrentView().Visible)
+                    {
+                        InputPane.GetForCurrentView().TryHide();
+                    }
+                }
+
+                await Task.Delay(50);
                 _core.Focus(FocusState.Programmatic);
+            }
+
+            int startPos = 0;
+            private void _core_SelectionChanged(object sender, RoutedEventArgs e)
+            {
+                if(_core.Document.Selection.Text.Length > 0 || startPos != _core.Document.Selection.StartPosition)
+                {
+                    Hide();
+                }
+            }
+
+            private void _core_KeyDown(object sender, KeyRoutedEventArgs e)
+            {
+                Hide();
             }
 
             private async void RichEditBoxContextFlyout_Closed(object sender, object e)
             {
-                await Task.Delay(100);
-                _core.Focus(FocusState.Programmatic);
+                _core.KeyDown -= _core_KeyDown;
+                _core.SelectionChanged -= _core_SelectionChanged;
+
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
+                {
+                    if (Target is UCCommandBar)
+                    {
+                        _core.PreventKeyboardDisplayOnProgrammaticFocus = false;
+                    }
+
+                    _core.Focus(FocusState.Programmatic);
+                }
+                else
+                {
+                    _core.PreventKeyboardDisplayOnProgrammaticFocus = false;
+
+                    await Task.Delay(20);
+                    _core.Focus(FocusState.Keyboard);
+
+                    if (!InputPane.GetForCurrentView().Visible)
+                    {
+                        InputPane.GetForCurrentView().TryShow();
+                    }
+                }
             }
 
             private void CutButton_Click(object sender, RoutedEventArgs e) { RichEditBoxMenuEvents.Cut(_core); }
@@ -367,6 +414,8 @@ namespace Textie
             public RichEditBoxSelectionFlyout()
             {
                 Opened += RichEditBoxSelectionFlyout_Opened;
+
+                Placement = Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.TopEdgeAlignedLeft;
 
                 ResourceLoader loader = ResourceLoader.GetForCurrentView();
 
@@ -592,6 +641,7 @@ namespace Textie
         internal class RichEditBoxMenuEvents
         {
             RichEditBoxCore _core;
+
             internal RichEditBoxMenuEvents(RichEditBoxCore Core)
             {
                 _core = Core;
@@ -599,17 +649,17 @@ namespace Textie
 
             internal static void Cut(RichEditBoxCore Core)
             {
-                Core.Document.Selection.Cut();
+                Core.CoreText.Cut();
             }
 
             internal static void Copy(RichEditBoxCore Core)
             {
-                Core.Document.Selection.Copy();
+                Core.CoreText.Copy();
             }
 
             internal static void Paste(RichEditBoxCore Core)
             {
-                Core.Document.Selection.Paste(1);
+                Core.CoreText.Paste();
             }
 
             internal static void SelectAll(RichEditBoxCore Core)

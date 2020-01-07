@@ -8,18 +8,20 @@ using Windows.Storage;
 using Windows.UI.StartScreen;
 using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
+using Windows.UI.Core;
 
 namespace Textie
 {
     /// <summary>
-    /// Обеспечивает зависящее от конкретного приложения поведение, дополняющее класс Application по умолчанию.
+    /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     public sealed partial class App : Application
     {
         /// <summary>
-        /// Инициализирует одноэлементный объект приложения.  Это первая выполняемая строка разрабатываемого
-        /// кода; поэтому она является логическим эквивалентом main() или WinMain().
+        /// Initializes the singleton application object.  This is the first line of authored code
+        /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
+        /// 
         ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
         /// <summary>
@@ -67,6 +69,11 @@ namespace Textie
                 localSettings.Values.Add("titleBarColor", "0");
             }
 
+            if (!localSettings.Values.ContainsKey("TabBarPosition"))
+            {
+                localSettings.Values.Add("TabBarPosition", "0");
+            }
+
             if (!localSettings.Values.ContainsKey("FontFamily"))
             {
                 localSettings.Values.Add("FontFamily", "Segoe UI");
@@ -112,140 +119,96 @@ namespace Textie
         }
 
         /// <summary>
-        /// Вызывается при обычном запуске приложения пользователем.  Будут использоваться другие точки входа,
-        /// например, если приложение запускается для открытия конкретного файла.
+        /// Invoked when the application is launched normally by the end user.  Other entry points
+        /// will be used such as when the application is launched to open a specific file.
         /// </summary>
-        /// <param name="e">Сведения о запросе и обработке запуска.</param>
+        /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
-            // Do not repeat app initialization when the Window already has content, 
-            // just ensure that the window is active 
-
-            // CoreApplication.EnablePrelaunch was introduced in Windows 10 version 1607
-            bool canEnablePrelaunch = ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "EnablePrelaunch");
-
-            if (rootFrame == null)
-            {
-                // Create a Frame to act as the navigation context and navigate to the first page 
-                rootFrame = new Frame();
-
-                // Associate the frame with a SuspensionManager key 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Normal,
+                async () =>
                 {
-                    // Restore the saved session state only when appropriate 
-                }
+                    Frame rootFrame = Window.Current.Content as Frame;
+                    // Do not repeat app initialization when the Window already has content, 
+                    // just ensure that the window is active 
 
-                // Place the frame in the current Window 
-                Window.Current.Content = rootFrame;
-            }
+                    // CoreApplication.EnablePrelaunch was introduced in Windows 10 version 1607
+                    bool canEnablePrelaunch = ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "EnablePrelaunch");
 
-            if (e.PrelaunchActivated == false)
-            {
-                // On Windows 10 version 1607 or later, this code signals that this app wants to participate in prelaunch
-                if (canEnablePrelaunch)
-                {
-                   TryEnablePrelaunch();
-                }
+                    if (rootFrame == null)
+                    {
+                        // Create a Frame to act as the navigation context and navigate to the first page 
+                        rootFrame = new Frame();
 
-                // TODO: This is not a prelaunch activation. Perform operations which
-                // assume that the user explicitly launched the app such as updating
-                // the online presence of the user on a social network, updating a
-                // what's new feed, etc.
+                        // Associate the frame with a SuspensionManager key 
+                        if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                        {
+                            // Restore the saved session state only when appropriate 
+                        }
 
-                // When the navigation stack isn't restored navigate to the first page,
-                // configuring the new page by passing required information as a navigation
-                // parameter
-                //MainPage is always in rootFrame so we don't have to worry about restoring the navigation state on resume
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                        // Place the frame in the current Window 
+                        Window.Current.Content = rootFrame;
+                    }
 
-                rootFrame.CacheSize = 2;
-            }
+                    if (e.PrelaunchActivated == false)
+                    {
+                        // On Windows 10 version 1607 or later, this code signals that this app wants to participate in prelaunch
+                        if (canEnablePrelaunch)
+                        {
+                            TryEnablePrelaunch();
+                        }
 
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2))
-            {
-                await ConfigureJumpList();
-            }
+                        // TODO: This is not a prelaunch activation. Perform operations which
+                        // assume that the user explicitly launched the app such as updating
+                        // the online presence of the user on a social network, updating a
+                        // what's new feed, etc.
 
-            if (rootFrame.Content == null)
-            {
-                if (!rootFrame.Navigate(typeof(MainPage)))
-                {
-                    throw new Exception("Failed to create initial page");
-                }
-            }
+                        // When the navigation stack isn't restored navigate to the first page,
+                        // configuring the new page by passing required information as a navigation
+                        // parameter
+                        //MainPage is always in rootFrame so we don't have to worry about restoring the navigation state on resume
+                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    }
 
-            // Ensure the current window is active
-            Window.Current.Activate();
+                    if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2))
+                    {
+                        await ConfigureJumpList();
+                    }
 
+                    // Ensure the current window is active
+                    Window.Current.Activate();
+                });
         }
 
-        protected override void OnActivated(IActivatedEventArgs args)
+        protected override async void OnActivated(IActivatedEventArgs args)
         {
-            if (args.Kind == ActivationKind.Protocol)
-            {
-                ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
-                Frame rootFrame = Window.Current.Content as Frame;
-                // Do not repeat app initialization when the Window already has content, 
-                // just ensure that the window is active 
-                if (rootFrame == null)
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Normal,
+                () =>
                 {
-                    // Create a Frame to act as the navigation context and navigate to the first page 
-                    rootFrame = new Frame();
-                    // Associate the frame with a SuspensionManager key 
-                    if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                    Frame rootFrame = Window.Current.Content as Frame;
+                    // Do not repeat app initialization when the Window already has content, 
+                    // just ensure that the window is active 
+                    if (rootFrame == null)
                     {
-                        // Restore the saved session state only when appropriate 
+                        // Create a Frame to act as the navigation context and navigate to the first page 
+                        rootFrame = new Frame();
+                        // Associate the frame with a SuspensionManager key 
+                        if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                        {
+                            // Restore the saved session state only when appropriate 
+                        }
+
+                        // Place the frame in the current Window 
+                        Window.Current.Content = rootFrame;
                     }
 
-                    // Place the frame in the current Window 
-                    Window.Current.Content = rootFrame;
-                }
+                    rootFrame.Navigate(typeof(MainPage), args);
 
-                rootFrame.Navigate(typeof(MainPage), args);
-                if (rootFrame.Content == null)
-                {
-                    if (!rootFrame.Navigate(typeof(MainPage)))
-                    {
-                        throw new Exception("Failed to create initial page");
-                    }
-                }
-
-                // Ensure the current window is active 
-                Window.Current.Activate();
-            }
-
-            if(args.Kind == ActivationKind.ToastNotification)
-            {
-                Frame rootFrame = Window.Current.Content as Frame;
-                // Do not repeat app initialization when the Window already has content, 
-                // just ensure that the window is active 
-                if (rootFrame == null)
-                {
-                    // Create a Frame to act as the navigation context and navigate to the first page 
-                    rootFrame = new Frame();
-                    // Associate the frame with a SuspensionManager key 
-                    if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                    {
-                        // Restore the saved session state only when appropriate 
-                    }
-
-                    // Place the frame in the current Window 
-                    Window.Current.Content = rootFrame;
-                }
-                rootFrame.Navigate(typeof(MainPage), args);
-                if (rootFrame.Content == null)
-                {
-                    if (!rootFrame.Navigate(typeof(MainPage)))
-                    {
-                        throw new Exception("Failed to create initial page");
-                    }
-                }
-
-                // Ensure the current window is active 
-                Window.Current.Activate();
-            }
+                    // Ensure the current window is active 
+                    Window.Current.Activate();
+                });
         }
 
         protected override void OnFileActivated(FileActivatedEventArgs args)
@@ -280,11 +243,43 @@ namespace Textie
             Window.Current.Activate();
         }
 
+        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            // Do not repeat app initialization when the Window already has content, 
+            // just ensure that the window is active 
+            if (rootFrame == null)
+            {
+                // Create a Frame to act as the navigation context and navigate to the first page 
+                rootFrame = new Frame();
+                // Associate the frame with a SuspensionManager key 
+                if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                    // Restore the saved session state only when appropriate 
+                }
+
+                // Place the frame in the current Window 
+                Window.Current.Content = rootFrame;
+            }
+
+            rootFrame.Navigate(typeof(MainPage), args);
+            if (rootFrame.Content == null)
+            {
+                if (!rootFrame.Navigate(typeof(MainPage)))
+                {
+                    throw new Exception("Failed to create initial page");
+                }
+            }
+
+            // Ensure the current window is active 
+            Window.Current.Activate();
+        }
+
         /// <summary>
-        /// Вызывается в случае сбоя навигации на определенную страницу
+        /// Invoked when Navigation to a certain page fails
         /// </summary>
-        /// <param name="sender">Фрейм, для которого произошел сбой навигации</param>
-        /// <param name="e">Сведения о сбое навигации</param>
+        /// <param name="sender">The Frame which failed navigation</param>
+        /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
@@ -292,16 +287,15 @@ namespace Textie
 
         private void OnResuming(object sender, object e)
         {
-            //TODO: Сохранить состояние приложения и остановить все фоновые операции
         }
 
         /// <summary>
-        /// Вызывается при приостановке выполнения приложения.  Состояние приложения сохраняется
-        /// без учета информации о том, будет ли оно завершено или возобновлено с неизменным
-        /// содержимым памяти.
+        /// Invoked when application execution is being suspended.  Application state is saved
+        /// without knowing whether the application will be terminated or resumed with the contents
+        /// of memory still intact.
         /// </summary>
-        /// <param name="sender">Источник запроса приостановки.</param>
-        /// <param name="e">Сведения о запросе приостановки.</param>
+        /// <param name="sender">The source of the suspend request.</param>
+        /// <param name="e">Details about the suspend request.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
@@ -326,11 +320,11 @@ namespace Textie
             if (JumpList.IsSupported() == true)
             {
                 JumpList jumpList = await JumpList.LoadCurrentAsync();
-
-                if(jumpList.Items.Count == 0)
+                jumpList.SystemGroupKind = JumpListSystemGroupKind.Recent;
+                if (jumpList.Items.Count == 0)
                 {
-                    jumpList.Items.Clear();
                     JumpListItem OpenJumpListItem = JumpListItem.CreateWithArguments("OpenFile", "Open File");
+                    OpenJumpListItem.Logo = new Uri("ms-appx:///Assets/JumpList/OpenFile.png");
                     jumpList.Items.Add(OpenJumpListItem);
 
                     try

@@ -7,75 +7,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
-        <Style x:Key="TitleBarBackButtonNormalStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
-            <Setter Property="FontSize" Value="24" />
-            <Setter Property="Height" Value="40" />
-            <Setter Property="Width" Value="40" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="Content" Value="" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="Content" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" AutomationProperties.AccessibilityView="Raw" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="TitleBarBackButtonSmallStyle" TargetType="Button" BasedOn="{StaticResource TitleBarBackButtonNormalStyle}">
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="Height" Value="32.4" />
-            <Setter Property="Width" Value="32.4" />
-        </Style>
     </Page.Resources>
 
     <Grid x:Name="SettingsGridMain" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Loaded="SettingsGridMain_Loaded">
-        <Grid x:Name="LeftAppTitleBar" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64.8" Visibility="Collapsed">
+        <Grid x:Name="LeftAppTitleBar" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Width="64.8" Visibility="Collapsed">
             <Button x:Name="BackButton" Style="{StaticResource NavigationBackButtonSmallStyle}" Click="BackButton_Click"/>
         </Grid>
-        <Grid x:Name="MiddleAppTitleBar" Grid.Column="1" VerticalAlignment="Top" Visibility="Collapsed" Margin="32,0,0,0" Height="32">
+        <Grid x:Name="MiddleAppTitleBar" VerticalAlignment="Top">
             <TextBlock x:Name="SettingsTextBarBlock" x:Uid="SettingsTextBarBlock" Text="[settings]"
-                       Style="{StaticResource CaptionTextBlockStyle}" FontSize="15" Margin="0,8,32,0" HorizontalAlignment="Center"/>
+                       Style="{StaticResource CaptionTextBlockStyle}" FontSize="15" Margin="0,0,64,0" HorizontalAlignment="Center"/>
         </Grid>
-        <Grid x:Name="SettingsContentGrid">
+        <Grid x:Name="SettingsContentGrid" Background="Transparent">
             <Pivot x:Name="SettingsPivotMain">
                 <PivotItem x:Name="ThemeSettingsPivotItem" Style="{StaticResource PivotTitleContentControlStyle}">
                     <PivotItem.Header>
@@ -83,38 +25,46 @@
                     </PivotItem.Header>
                     <ScrollViewer>
                         <StackPanel>
+                            <TextBlock x:Name="ThemeTextBlock" x:Uid="ThemeTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[theme]"/>
                             <StackPanel>
-                                <TextBlock x:Name="ThemeTextBlock" x:Uid="ThemeTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[theme]"/>
-                                <StackPanel>
-                                    <TextBlock x:Name="AppThemeTextBlock" x:Uid="AppThemeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[apptheme]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                    <StackPanel Orientation="Vertical">
-                                        <RadioButton x:Name="WindowsDefaultRadioButton" x:Uid="WindowsDefaultRadioButton" Tag="WD" Width="152" GroupName="Theme" Checked="WindowsDefaultRadioButton_Checked" Content="[windowsdefault]"/>
-                                        <StackPanel>
-                                            <ToggleSwitch x:Name="TransparencyToggleSwitch" x:Uid="TransparencyToggleSwitch" Header="[transparencyeffectsincontent]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Toggled="TransparencyToggleSwitch_Toggled"/>
-                                        </StackPanel>
-                                        <RadioButton x:Name="LightRadioButton" x:Uid="LightRadioButton" Tag="Light" GroupName="Theme" Checked="LightRadioButton_Checked" Content="[light]"/>
-                                        <RadioButton x:Name="DarkRadioButton" x:Uid="DarkRadioButton" Tag="Dark" GroupName="Theme" Checked="DarkRadioButton_Checked" Content="[dark]"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel>
-                                    <TextBlock x:Name="TextBoxThemeTextBlock" x:Uid="TextBoxThemeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[textboxtheme]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <TextBlock x:Name="AppThemeTextBlock" x:Uid="AppThemeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[apptheme]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <StackPanel Orientation="Vertical">
+                                    <RadioButton x:Name="WindowsDefaultRadioButton" x:Uid="WindowsDefaultRadioButton" Tag="WD" Width="152" GroupName="Theme" Checked="WindowsDefaultRadioButton_Checked" Content="[windowsdefault]"/>
                                     <StackPanel>
-                                        <ComboBox x:Name="TextBoxThemeComboBox" SelectionChanged="TextBoxThemeComboBox_SelectionChanged" Margin="0,2,0,2">
-                                            <ComboBoxItem x:Name="LightTextBoxThemeComboBoxItem" x:Uid="LightTextBoxThemeComboBoxItem" Content="[light]"/>
-                                            <ComboBoxItem x:Name="DarkTextBoxThemeComboBoxItem" x:Uid="DarkTextBoxThemeComboBoxItem" Content="[dark]"/>
-                                        </ComboBox>
+                                        <ToggleSwitch x:Name="TransparencyToggleSwitch" x:Uid="TransparencyToggleSwitch" Header="[transparencyeffectsincontent]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Toggled="TransparencyToggleSwitch_Toggled"/>
                                     </StackPanel>
+                                    <RadioButton x:Name="LightRadioButton" x:Uid="LightRadioButton" Tag="Light" GroupName="Theme" Checked="LightRadioButton_Checked" Content="[light]"/>
+                                    <RadioButton x:Name="DarkRadioButton" x:Uid="DarkRadioButton" Tag="Dark" GroupName="Theme" Checked="DarkRadioButton_Checked" Content="[dark]"/>
                                 </StackPanel>
-                                <StackPanel>
-                                    <TextBlock x:Name="TitleBarColorTextBlock" x:Uid="TitleBarColorTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[titlebarcolor]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                    <StackPanel Orientation="Vertical">
-                                        <RadioButton x:Name="ThemeColorRadioButton" x:Uid="ThemeColorRadioButton" Tag="Theme" Content="[theme]" GroupName="TitleBarColor" Checked="ThemeColorRadioButton_Checked" />
-                                        <RadioButton x:Name="AccentColorRadioButton" x:Uid="AccentColorRadioButton" Tag="Accent" Content="[accent]" GroupName="TitleBarColor" Checked="AccentColorRadioButton_Checked" />
-                                    </StackPanel>
-                                </StackPanel>
-                                <TextBlock x:Name="NoteChangeTextBlock" x:Uid="NoteChangeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[noterestart]" Visibility="Collapsed"/>
-                                <HyperlinkButton x:Name="ColorsSettingsHyperlinkButton" x:Uid="ColorsSettingsHyperlinkButton" NavigateUri="ms-settings:personalization-colors" Content="[opencolorsettings]"/>
                             </StackPanel>
+                            <StackPanel>
+                                <TextBlock x:Name="TextBoxThemeTextBlock" x:Uid="TextBoxThemeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[textboxtheme]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <StackPanel Orientation="Vertical">
+                                    <ComboBox x:Name="TextBoxThemeComboBox" SelectionChanged="TextBoxThemeComboBox_SelectionChanged" Margin="0,2,0,2">
+                                        <ComboBoxItem x:Name="LightTextBoxThemeComboBoxItem" x:Uid="LightTextBoxThemeComboBoxItem" Content="[light]"/>
+                                        <ComboBoxItem x:Name="DarkTextBoxThemeComboBoxItem" x:Uid="DarkTextBoxThemeComboBoxItem" Content="[dark]"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock x:Name="TitleBarColorTextBlock" x:Uid="TitleBarColorTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[titlebarcolor]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <StackPanel Orientation="Vertical">
+                                    <RadioButton x:Name="ThemeColorRadioButton" x:Uid="ThemeColorRadioButton" Tag="Theme" Content="[theme]" GroupName="TitleBarColor" Checked="ThemeColorRadioButton_Checked" />
+                                    <RadioButton x:Name="AccentColorRadioButton" x:Uid="AccentColorRadioButton" Tag="Accent" Content="[accent]" GroupName="TitleBarColor" Checked="AccentColorRadioButton_Checked" />
+                                </StackPanel>
+                            </StackPanel>
+                            <HyperlinkButton x:Name="ColorsSettingsHyperlinkButton" x:Uid="ColorsSettingsHyperlinkButton" NavigateUri="ms-settings:personalization-colors" Content="[opencolorsettings]"/>
+                            <TextBlock x:Name="TabBarTextBlock" x:Uid="TabBarTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[tabbar]"/>
+                            <StackPanel>
+                                <TextBlock x:Name="TabBarPositionTextBlock" x:Uid="TabBarPositionTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[tabbarposition]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <StackPanel Orientation="Vertical">
+                                    <ComboBox x:Name="TabBarPositionComboBox" Margin="0,2,0,2" SelectionChanged="TabBarPositionComboBox_SelectionChanged">
+                                        <ComboBoxItem x:Name="TopTabBarPositionComboBox" x:Uid="TopTabBarPositionComboBox" Content="[top]"/>
+                                        <ComboBoxItem x:Name="BottomTabBarPositionComboBox" x:Uid="BottomTabBarPositionComboBox" Content="[bottom]"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock x:Name="NoteChangeTextBlock" x:Uid="NoteChangeTextBlock" Margin="0,4,0,0" Style="{ThemeResource BaseTextBlockStyle}" Text="[noterestart]" Visibility="Collapsed"/>
                         </StackPanel>
                     </ScrollViewer>
                 </PivotItem>
@@ -124,53 +74,43 @@
                     </PivotItem.Header>
                     <ScrollViewer>
                         <StackPanel>
-                            <StackPanel>
-                                <TextBlock x:Name="FontTextBlock" x:Uid="FontTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[font]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock x:Name="FontTypeTextBlock" x:Uid="FontTypeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[fonttype]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                    <StackPanel>
-                                        <ComboBox x:Name="FontTypeComboBox" Margin="0,2,0,2" SelectionChanged="FontTypeComboBox_SelectionChanged">
+                            <TextBlock x:Name="FontTextBlock" x:Uid="FontTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[font]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock x:Name="FontTypeTextBlock" x:Uid="FontTypeTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[fonttype]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                <StackPanel>
+                                    <ComboBox x:Name="FontTypeComboBox" Margin="0,2,0,2" SelectionChanged="FontTypeComboBox_SelectionChanged">
 
-                                        </ComboBox>
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel>
-                                <TextBlock x:Name="SearchEngineTextBlock" x:Uid="SearchEngineTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[searchengine]"/>
-                                <StackPanel Orientation="Vertical">
-                                    <RadioButton x:Name="BingRadioButton" Content="Bing" GroupName="SearchEngine" Checked="BingRadioButton_Checked" />
-                                    <RadioButton x:Name="GoogleRadioButton" Content="Google" GroupName="SearchEngine" Checked="GoogleRadioButton_Checked" />
-                                    <RadioButton x:Name="YahooRadioButton" Content="Yahoo" GroupName="SearchEngine" Checked="YahooRadioButton_Checked" />
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel>
-                                <TextBlock x:Name="VibrationTextBlock" x:Uid="VibrationTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[vibration]"/>
-                                <StackPanel Orientation="Vertical">
-                                    <ToggleSwitch x:Name="VibrateToggleSwitch" x:Uid="VibrateToggleSwitch" Header="[vibrate]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Toggled="VibrateToggleSwitch_Toggled"/>
-                                    <TextBlock x:Name="VibrateNotAvailableTextBlock" x:Uid="VibrateNotAvailableTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[vibrationnotavailable]" Visibility="Collapsed"/>
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel>
-                                <TextBlock x:Name="SavingTextBlock" x:Uid="SavingTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[saving]"/>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock x:Name="TrimNewLinesDescriptionTextBlock" x:Uid="TrimNewLinesDescriptionTextBlock" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="[trimnewlinesdescription]"/>
-                                    <ComboBox x:Name="TrimNewLinesComboBox" Margin="0,2,0,2" SelectionChanged="TrimNewLinesComboBox_SelectionChanged" >
-                                        <ComboBoxItem x:Name="NoneTrimNewLinesComboBoxItem" x:Uid="NoneTrimNewLinesComboBoxItem" Content="[none]"/>
-                                        <ComboBoxItem x:Name="TrimLeadingTrimNewLinesComboBoxItem" x:Uid="TrimLeadingTrimNewLinesComboBoxItem" Content="[trimleadingnewlines]"/>
-                                        <ComboBoxItem x:Name="TrimTrailingTrimNewLinesComboBoxItem" x:Uid="TrimTrailingTrimNewLinesComboBoxItem" Content="[trimtrailingnewlines]"/>
-                                        <ComboBoxItem x:Name="TrimBothTrimNewLinesComboBoxItem" x:Uid="TrimBothTrimNewLinesComboBoxItem" Content="[trimboth]"/>
                                     </ComboBox>
                                 </StackPanel>
                             </StackPanel>
-                            <StackPanel>
-                                <TextBlock x:Name="HotExitTextBlock" x:Uid="HotExitTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[hotexit]"/>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock x:Name="HotExitDescriptionTextBlock" x:Uid="HotExitDescriptionTextBlock" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="[hotexitdescription]" />
-                                    <ComboBox x:Name="HotExitComboBox" Margin="0,2,0,2" SelectionChanged="HotExitComboBox_SelectionChanged">
-                                        <ComboBoxItem x:Name="NoneHotExitComboBoxItem" x:Uid="NoneHotExitComboBoxItem" Content="[none]"/>
-                                        <ComboBoxItem x:Name="UnsavedOnlyHotExitComboBoxItem" x:Uid="UnsavedOnlyHotExitComboBoxItem" Content="Unsaved files only"/>
-                                    </ComboBox>
-                                </StackPanel>
+                            <TextBlock x:Name="SearchEngineTextBlock" x:Uid="SearchEngineTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[searchengine]"/>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton x:Name="BingRadioButton" Content="Bing" GroupName="SearchEngine" Checked="BingRadioButton_Checked" />
+                                <RadioButton x:Name="GoogleRadioButton" Content="Google" GroupName="SearchEngine" Checked="GoogleRadioButton_Checked" />
+                                <RadioButton x:Name="YahooRadioButton" Content="Yahoo" GroupName="SearchEngine" Checked="YahooRadioButton_Checked" />
+                            </StackPanel>
+                            <TextBlock x:Name="VibrationTextBlock" x:Uid="VibrationTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[vibration]"/>
+                            <StackPanel Orientation="Vertical">
+                                <ToggleSwitch x:Name="VibrateToggleSwitch" x:Uid="VibrateToggleSwitch" Header="[vibrate]" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Toggled="VibrateToggleSwitch_Toggled"/>
+                                <TextBlock x:Name="VibrateNotAvailableTextBlock" x:Uid="VibrateNotAvailableTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[vibrationnotavailable]" Visibility="Collapsed"/>
+                            </StackPanel>
+                            <TextBlock x:Name="SavingTextBlock" x:Uid="SavingTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[saving]"/>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock x:Name="TrimNewLinesDescriptionTextBlock" x:Uid="TrimNewLinesDescriptionTextBlock" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="[trimnewlinesdescription]"/>
+                                <ComboBox x:Name="TrimNewLinesComboBox" Margin="0,2,0,2" SelectionChanged="TrimNewLinesComboBox_SelectionChanged" >
+                                    <ComboBoxItem x:Name="NoneTrimNewLinesComboBoxItem" x:Uid="NoneTrimNewLinesComboBoxItem" Content="[none]"/>
+                                    <ComboBoxItem x:Name="TrimLeadingTrimNewLinesComboBoxItem" x:Uid="TrimLeadingTrimNewLinesComboBoxItem" Content="[trimleadingnewlines]"/>
+                                    <ComboBoxItem x:Name="TrimTrailingTrimNewLinesComboBoxItem" x:Uid="TrimTrailingTrimNewLinesComboBoxItem" Content="[trimtrailingnewlines]"/>
+                                    <ComboBoxItem x:Name="TrimBothTrimNewLinesComboBoxItem" x:Uid="TrimBothTrimNewLinesComboBoxItem" Content="[trimboth]"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <TextBlock x:Name="HotExitTextBlock" x:Uid="HotExitTextBlock" Style="{ThemeResource TitleTextBlockStyle}" Text="[hotexit]" FontFamily="Segoe UI"/>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock x:Name="HotExitDescriptionTextBlock" x:Uid="HotExitDescriptionTextBlock" Style="{ThemeResource BaseTextBlockStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="[hotexitdescription]" />
+                                <ComboBox x:Name="HotExitComboBox" Margin="0,2,0,2" SelectionChanged="HotExitComboBox_SelectionChanged">
+                                    <ComboBoxItem x:Name="NoneHotExitComboBoxItem" x:Uid="NoneHotExitComboBoxItem" Content="[none]"/>
+                                    <ComboBoxItem x:Name="UnsavedOnlyHotExitComboBoxItem" x:Uid="UnsavedOnlyHotExitComboBoxItem" Content="Unsaved files only"/>
+                                </ComboBox>
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
@@ -190,13 +130,22 @@
                         <TextBlock Name="AboutSettingsPivotItemHeader" x:Uid="AboutSettingsPivotItemHeader" Text="[about]" FontSize="18" />
                     </PivotItem.Header>
                     <ScrollViewer>
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock x:Name="ProgramVersionTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[version]" Tapped="ProgramVersionTextBlock_Tapped" />
-                            <TextBlock x:Name="ThanksTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="Thanks to Diederik Krols for UWP Composition BackDrop Control" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                            <TextBlock x:Name="CopyrightTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[copyright]"/>
-                            <Button x:Name="ForDevelopersButton" Content="For Developers" x:DeferLoadStrategy="Lazy" Click="ForDevelopersButton_Click"/>
-                            <Button x:Name="FeedbackButton" x:Uid="FeedbackButton" Content="Send feedback" Margin="0,4,0,0" Visibility="Collapsed" Click="FeedbackButton_Click"/>
-                        </StackPanel>
+                        <Grid>
+                            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+                                <TextBlock x:Name="ProgramVersionTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[version]" Tapped="ProgramVersionTextBlock_Tapped" />
+                                <TextBlock x:Name="CopyrightTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="[copyright]"/>
+                                <Button x:Name="ForDevelopersButton" Content="For Developers" x:DeferLoadStrategy="Lazy" Click="ForDevelopersButton_Click"/>
+                                <Button x:Name="FeedbackButton" x:Uid="FeedbackButton" Content="Send feedback" Margin="0,4,0,0" Visibility="Collapsed" Click="FeedbackButton_Click" FontFamily="Segoe UI"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                <HyperlinkButton NavigateUri="https://twitter.com/TextieEditor" Margin="2">
+                                    <Image Height="64" Width="64" Source="ms-appx:/Assets/SocialMedia/Twitter.png"></Image>
+                                </HyperlinkButton>
+                                <HyperlinkButton NavigateUri="https://github.com/10Develops/textie" Margin="2">
+                                    <Image Height="64" Width="64" Source="ms-appx:/Assets/SocialMedia/GitHub.png"></Image>
+                                </HyperlinkButton>
+                            </StackPanel>
+                        </Grid>
                     </ScrollViewer>
                 </PivotItem>
             </Pivot>

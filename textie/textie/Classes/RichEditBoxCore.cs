@@ -1,19 +1,13 @@
-﻿using System;
-using Windows.Foundation;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.System;
 using Windows.Storage;
-using System.Text;
 using Windows.Foundation.Metadata;
 using Windows.UI.Text;
 using Windows.UI;
-using System.Diagnostics;
-using Windows.UI.Xaml.Controls.Primitives;
+using System.Text.RegularExpressions;
 
 namespace Textie
 {
@@ -24,6 +18,10 @@ namespace Textie
         ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
         RichEditBoxCoreText coreText;
+
+        public SaveState TextSaveState;
+
+        public bool ContentChanged = false;
 
         private string CRLF = "\r\n";
         private string LF = "\n";
@@ -55,6 +53,11 @@ namespace Textie
             string FontType = localSettings.Values["FontFamily"].ToString();
             FontFamily = new FontFamily(FontType);
 
+            IsRightTapEnabled = true;
+            IsHoldingEnabled = true;
+
+            IsSpellCheckEnabled = true;
+
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3))
             {
                 ContextFlyout = null;
@@ -64,8 +67,6 @@ namespace Textie
             {
                 SelectionFlyout = null;
             }
-
-            ReadyToSave = false;
 
             FontSize = 15;
             TextWrapping = TextWrapping.Wrap;
@@ -84,6 +85,27 @@ namespace Textie
 
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+            {
+                ContentChanged = args.IsContentChanging;
+            }
+            else
+            {
+                ContentChanged = (CoreText.Text.Length > 1 && Document.CanUndo());
+            }
+
+            if (TextSaveState == SaveState.OpenedFile && !ContentChanged)
+            {
+                TextSaveState = SaveState.TextIsUnchanged;
+                ContentChanged = false;
+            }
+            else
+            {
+                if (ContentChanged)
+                {
+                    TextSaveState = SaveState.TextIsChanged;
+                }
+            }
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
@@ -113,21 +135,14 @@ namespace Textie
                     Document.Selection.TypeText("\t");
                     e.Handled = true;
                 }
-
             }
         }
 
-        private bool _readyToSave = false;
-        public bool ReadyToSave
+        public enum SaveState
         {
-            get
-            {
-                return _readyToSave;
-            }
-            set
-            {
-                _readyToSave = value;
-            }
+            TextIsUnchanged,
+            TextIsChanged,
+            OpenedFile
         }
 
         public RichEditBoxCoreText CoreText
@@ -181,74 +196,124 @@ namespace Textie
 
         public int Find(string FindingText, bool MatchCase)
         {
-            var textLength = CoreText.Text.Length;
+            int textLength = CoreText.Text.Length;
             Document.Selection.SetRange(0, textLength);
             Document.Selection.CharacterFormat.BackgroundColor = Colors.White;
+            
+            int f;
+            int c = 0;
 
-            int i = 1;
-            while (i > 0)
+            if (MatchCase)
             {
-                Focus(FocusState.Programmatic);
+                f = Regex.Matches(CoreText.Text, FindingText, RegexOptions.None).Count;
+            }
+            else
+            {
+                f = Regex.Matches(CoreText.Text, FindingText, RegexOptions.IgnoreCase).Count;
+            }
 
+            if(FindingText == "")
+            {
+                f = 0;
+            }
+            
+            Focus(FocusState.Programmatic);
+
+            for (int i = 0; i < f; i++)
+            {
                 if (MatchCase == true)
                 {
-                    i = Document.Selection.FindText(FindingText,
+                    c = Document.Selection.FindText(FindingText,
                         textLength, FindOptions.Case);
                 }
                 else
                 {
-                    i = Document.Selection.FindText(FindingText,
+                    c = Document.Selection.FindText(FindingText,
                         textLength, FindOptions.None);
                 }
 
-                TextSelection = Document.Selection;
-                if (TextSelection != null && i != 0)
-                {
-                    TextSelection.CharacterFormat.BackgroundColor = Colors.Yellow;
-                }
-                else
-                {
-                    Document.Selection.SetRange(0, 0);
-                }
+                Document.Selection.CharacterFormat.BackgroundColor = Colors.Yellow;
+            }
+            
+            Document.Selection.SetRange(0, 0);
+
+            if (MatchCase == true)
+            {
+                Document.Selection.FindText(FindingText,
+                    textLength, FindOptions.Case);
+            }
+            else
+            {
+                Document.Selection.FindText(FindingText,
+                    textLength, FindOptions.None);
             }
 
-            return i;
+            Document.Selection.CharacterFormat.BackgroundColor = Colors.Yellow;
+
+            return f;
         }
 
         public int Replace(string WhatText, string WithText, bool MatchCase)
         {
-            var textLength = CoreText.Text.Length;
+            int textLength = CoreText.Text.Length;
             Document.Selection.SetRange(0, textLength);
             Document.Selection.CharacterFormat.BackgroundColor = Colors.White;
-            int i = 1;
-            while (i > 0)
-            {
-                Focus(FocusState.Programmatic);
 
+            int f;
+            int c = 0;
+
+            if (MatchCase)
+            {
+                f = Regex.Matches(CoreText.Text, WhatText, RegexOptions.None).Count;
+            }
+            else
+            {
+                f = Regex.Matches(CoreText.Text, WhatText, RegexOptions.IgnoreCase).Count;
+            }
+
+            if (WhatText == "")
+            {
+                f = 0;
+            }
+
+            Focus(FocusState.Programmatic);
+
+            for (int i = 0; i < f; i++)
+            {
                 if (MatchCase == true)
                 {
-                    i = Document.Selection.FindText(WhatText,
+                    c = Document.Selection.FindText(WhatText,
                         textLength, FindOptions.Case);
                 }
                 else
                 {
-                    i = Document.Selection.FindText(WhatText,
+                    c = Document.Selection.FindText(WhatText,
                         textLength, FindOptions.None);
                 }
 
-                TextSelection = Document.Selection;
-                if (TextSelection != null && i != 0)
+                if(Document.Selection != null)
                 {
-                    TextSelection.SetText(TextSetOptions.None, WithText);
-                    TextSelection.CharacterFormat.BackgroundColor = Colors.Yellow;
-                }
-                else
-                {
-                    Document.Selection.SetRange(0, 0);
+                    Document.Selection.SetText(TextSetOptions.None, WithText);
+                    Document.Selection.CharacterFormat.BackgroundColor = Colors.Yellow;
                 }
             }
 
-            return i;
+            Document.Selection.SetRange(0, 0);
+
+            if (MatchCase == true)
+            {
+                Document.Selection.FindText(WithText,
+                    textLength, FindOptions.Case);
+            }
+            else
+            {
+                Document.Selection.FindText(WithText,
+                    textLength, FindOptions.None);
+            }
+
+            Document.Selection.CharacterFormat.BackgroundColor = Colors.Yellow;
+
+            return f;
         }
 
         public void Trim(TrimingOptions option)
