@@ -357,7 +357,7 @@ namespace Textie
             Package package = Package.Current;
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
-            ProgramVersionTextBlock.Text = string.Format("{0} {1} {2}.{3}.{4}.{5}", package.DisplayName + "_textieRelease", 
+            ProgramVersionTextBlock.Text = string.Format("{0} {1} {2}.{3}.{4}.{5}", package.DisplayName, 
                 UnitedCodebase.Classes.DeviceDetails.ProcessorArchitecture, version.Major, version.Minor, version.Build, version.Revision);
             CopyrightTextBlock.Text = string.Format("© 2019 {0}", package.PublisherDisplayName);
 
