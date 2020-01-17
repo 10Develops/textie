@@ -1,1 +1,61 @@
-<!DOCTYPE html><html lang="en-US">	<head>		<title>Textie Editor</title>		<link href="style.css" type="text/css" rel="stylesheet"/>		<link rel="icon" href="favicon.ico" type="image/x-icon" />		<script type="text/javascript" src="script.js"></script>		<meta name="viewport" content="width=device-width, initial-scale=1.0">	</head>	<body>		<div id="menu-left">			<ul>				<li><a href="index.html">Home</a></li>				<li><b>Download</b></li>			</ul>		</div>		<div id="menu-right">			<ul>				<li class="dropdown" onclick="ShowDropdown();">Language					<ul class="dropdown-content">						<li><a href="download-hy.html">Հայերեն</a></li>										</ul>				</li>				</ul>		</div>		<div id="current-version">				<p>Current version: 0.9.6</p>		</div>		<div id="text">			<img src="logo.png" height="32px" width="32px" id="logo" />			<h1 id="header">Textie Editor</h1>			<div id="center-text">				<h2>Installation</h2>				<h3>Appxbundle Installation</h3>				<p>Click <b>download</b> to download the appxbundle file.<br>				On desktop Windows 10, you need to obtain the Certificate that signed the App. 				For more info, see <a href="https://docs.microsoft.com/en-us/previous-versions/windows/apps/bg126232(v=win.10)#installing-the-app-package-without-using-a-visual-studio-script">				Installing developer packages on Windows RT</a>.<br>				To install downloaded appxbundle of Textie Editor, first make sure if sideloading or developer mode is enabled.<br> 				To enable sideloading or developer mode, go to <b>Settings > Update & Security > For Developers</b> 				and set <b>Sideload apps</b> or <b>Developer mode</b>.<br> 				If sideloading or developer mode is selected, 				you will be receive a warning that installing app from untrusted sources could expose your device and data, 				or harm your device, click <b>yes</b>.<br> Now you can install Textie Editor appxbundle. 				Click to downloaded appxbundle and you'll be shown installation window, click <b>install</b> and wait, 				if the app is not appeared in all apps list, try again.<br>				Now Textie Editor app is installed.</p>				<a href="TextieEditor_0.9.6.0_x86_x64_arm.appxbundle"><input type="button" value="Download" id="download"/></a>			</div>		</div>		<div id="getit">			<a><img src="https://assets.windowsphone.com/13484911-a6ab-4170-8b7e-795c1e8b4165/English_get_L_InvariantCulture_Default.png" height="60px" alt="Get" title="Get app from Microsoft Store" /></a>			<a href="https://twitter.com/TextieEditor"><img src="https://pbs.twimg.com/profile_images/1111729635610382336/_65QFl7B_400x400.png" height="60px" alt="Textie on Twitter" title="Textie on Twitter" /></a>			<a href="https://github.com/10Develops/textie"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" height="60px" alt="Get source of Textie Editor from GitHub" title="Textie on GitHub" /></a>		</div>	</body></html>
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<title>Textie Editor</title>
+		<link href="style.css" type="text/css" rel="stylesheet"/>
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<script type="text/javascript" src="script.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+		<div id="menu-left">
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><b>Download</b></li>
+			</ul>
+		</div>
+		<div id="menu-right">
+			<ul>
+				<li class="dropdown" onclick="ShowDropdown();">Language
+					<ul class="dropdown-content">
+						<li><a href="download-hy.html">Հայերեն</a></li>					
+					</ul>
+				</li>
+				</ul>
+		</div>
+		<div id="current-version">
+				<p>Current version: 0.9.6</p>
+		</div>
+		<div id="text">
+			<img src="logo.png" height="32px" width="32px" id="logo" />
+			<h1 id="header">Textie Editor</h1>
+			<div id="center-text">
+				<h2>Installation</h2>
+				<h3>Appxbundle Installation</h3>
+				<p>Click <b>download</b> to download the appxbundle file.<br>
+				On desktop Windows 10 1607 or later, you need to obtain the Certificate that signed the App and open the appxbundle file. 
+				For more info, see <a href="https://docs.microsoft.com/en-us/previous-versions/windows/apps/bg126232(v=win.10)#installing-the-app-package-without-using-a-visual-studio-script">
+				Installing developer packages on Windows RT</a>.<br>
+				Or you can download the full package and run <b>Add-AppDevPackage.ps1</b> on all versions of desktop Windows 10, on all versions of mobile, open the appxbundle file.
+				To install downloaded appxbundle of Textie Editor, first make sure if sideloading or developer mode is enabled.<br> 
+				To enable sideloading or developer mode, go to <b>Settings > Update & Security > For Developers</b> 
+				and set <b>Sideload apps</b> or <b>Developer mode</b>.<br> 
+				If sideloading or developer mode is selected, 
+				you will be receive a warning that installing app from untrusted sources could expose your device and data, 
+				or harm your device, click <b>yes</b>.<br> Now you can install Textie Editor appxbundle. 
+				Click to downloaded appxbundle and you'll be shown installation window, click <b>install</b> and wait, 
+				if the app is not appeared in all apps list, try again.<br>
+				Now Textie Editor app is installed.</p>
+				<a href="TextieEditor_0.9.6.0_x86_x64_arm.appxbundle"><input type="button" value="Download" id="download"/></a>
+				<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6.0_ARM64.appx">Download for ARM64</a>
+				<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6_FullPackage.zip">Download full package</a>
+			</div>
+		</div>
+		<div id="getit">
+			<a><img src="https://assets.windowsphone.com/13484911-a6ab-4170-8b7e-795c1e8b4165/English_get_L_InvariantCulture_Default.png" height="60px" alt="Get" title="Get app from Microsoft Store" /></a>
+			<a href="https://twitter.com/TextieEditor"><img src="https://pbs.twimg.com/profile_images/1111729635610382336/_65QFl7B_400x400.png" height="60px" alt="Textie on Twitter" title="Textie on Twitter" /></a>
+			<a href="https://github.com/10Develops/textie"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" height="60px" alt="Get source of Textie Editor from GitHub" title="Textie on GitHub" /></a>
+		</div>
+	</body>
+</html>
+
