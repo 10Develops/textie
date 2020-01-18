@@ -70,7 +70,7 @@ p
 	background: #232423;
 	top: 14%;
 	left: 10%;
-	height: 70%;
+	min-height: 70%;
 	width: 80%;
 	border: 1.5px solid white;
 }
@@ -139,6 +139,7 @@ b
 body
 {
 	background:	black;
+	overflow-y: auto;
 }
 
 @media only screen and (min-width: 350px) {
@@ -165,7 +166,7 @@ body
 	{
 		top: 14%;
 		left: 24%;
-		height: 60%;
+		min-height: 60%;
 		width: 50%;
 	}
 }
