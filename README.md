@@ -31,3 +31,6 @@
     <td><samp>148grYTkmWABsGzFHQp8MHmkqTiv4ZJYBu</samp></td>
   </tr>
 </table>
+
+## How to use
+Add a reference to 'UnitedCodebase' ().
