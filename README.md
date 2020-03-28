@@ -33,4 +33,4 @@
 </table>
 
 ## How to use
-Add a reference to <b>UnitedCodebase</b> ([https://github.com/10Develops/UnitedCodebase link]).
+Add a reference to <b>UnitedCodebase</b> (<a href="https://www.nuget.org/packages/UnitedCodebase/0.9.0.1">link</a>).
