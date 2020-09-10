@@ -16,7 +16,7 @@ li
 	padding: 4px;
 	border: 2px solid white;
 	border-radius: 4px;
-	background: #232423;
+	background: #1F1F1F;
 	margin-left: 4px;
 	width: 80px;
 	height: 20px;
@@ -72,7 +72,7 @@ p
 #text
 {
 	position: absolute;
-	background: #232423;
+	background: #1F1F1F;
 	top: 14%;
 	left: 10%;
 	min-height: 70%;
@@ -175,3 +175,48 @@ body
 		width: 50%;
 	}
 }
+
+@media (prefers-color-scheme: light) { 
+	body
+	{
+		background: white;
+	}	
+
+	li
+	{
+		color: black;
+		border: 2px solid black;
+		background: #E6E6E6;
+	}
+
+	#text
+	{
+		border: 1.5px solid black;
+		background: #E6E6E6;
+	}
+
+	h1
+	{
+		color: 	black;
+	}
+	
+	h2
+	{
+		color:	black;
+	}
+	
+	h3
+	{
+		color: 	black;
+	}
+	
+	p
+	{
+		color: 	black;
+	}
+
+	#download
+	{
+		border: 2px solid black;
+	}
+ }
