@@ -31,3 +31,6 @@
     <td><samp>148grYTkmWABsGzFHQp8MHmkqTiv4ZJYBu</samp></td>
   </tr>
 </table>
+
+## How to use
+Add a reference to <b>UnitedCodebase</b> (<a href="https://www.nuget.org/packages/UnitedCodebase/0.9.0.1">link</a>).
