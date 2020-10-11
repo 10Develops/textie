@@ -64,20 +64,22 @@ p
 
 #getit
 {
-	position:absolute;
+	position: absolute;
 	right: 6px;
-	bottom: 6px;
 }
 
 #text
 {
-	position: absolute;
+	position: relative;
 	background: #1F1F1F;
-	top: 14%;
-	left: 10%;
-	min-height: 70%;
-	width: 80%;
+	margin-top: calc(20vh - 20vmax + 90px);
+	margin-left: 3%;
+	margin-right: 3%;
+	margin-bottom: 4vh;
+	min-height: 60vmin;
 	border: 1.5px solid white;
+	padding: 2px;
+	padding-bottom: 8px;
 }
 
 #center-text{
@@ -161,16 +163,25 @@ body
 	}
 
 	#current-version
-	{
+	{	
 		position: absolute;
-		top: 85px;
+		top: 35px;
 		right: 10px;	
+	}
+
+	#getit{
+		bottom: 0;
 	}
 
 	#text
 	{
-		top: 14%;
-		left: 24%;
+		margin-top: 0;
+		margin-left: 0;
+		margin-right: 0;
+		margin-bottom: 0;
+		position: absolute;
+		top: 15%;
+		left: 25%;
 		min-height: 60%;
 		width: 50%;
 	}
