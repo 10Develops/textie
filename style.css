@@ -174,25 +174,22 @@ body
 	#current-version
 	{	
 		position: absolute;
-		top: 35px;
+		top: 95px;
 		right: 10px;	
 	}
 
 	#getit{
-		bottom: 0;
 	}
 
 	#text
 	{
-		margin-top: 0;
-		margin-left: 0;
-		margin-right: 0;
-		margin-bottom: 0;
-		position: absolute;
-		top: 15%;
-		left: 25%;
-		min-height: 60%;
-		width: 50%;
+		margin-top: calc(6.5vw + 6mm);
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: calc(5vh + 7vw);
+		max-width: calc(48vw);
+		width: calc(62% - 12vw);
+		min-height: calc(22vw + 120px);
 	}
 }
 
@@ -240,3 +237,10 @@ body
 		border: 2px solid black;
 	}
  }
+
+@media only screen and (min-width: 2400px) {
+	#text{
+		max-width: calc(26em + 22vw);
+		min-height: calc(22em + 8vw);
+	}
+}
