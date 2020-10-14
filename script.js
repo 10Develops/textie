@@ -7,5 +7,5 @@ window.onload = function(){
 };
 
 function ShowDropdown(){
-    document.getElementsByClassName("dropdown-content")[0].style.display = "block;";
+    document.getElementsByClassName("dropdown-content")[0].style.display = "block";
 }
