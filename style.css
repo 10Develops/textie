@@ -18,6 +18,7 @@ li
 	border-radius: 4px;
 	background: #1F1F1F;
 	margin-left: 4px;
+	margin-bottom: 2px;
 	width: 80px;
 	height: 20px;
 }
@@ -115,7 +116,7 @@ p
 
 .dropdown-content{
 	display: none;
-	margin-top: 5px;
+	padding-top: 6px;
 	margin-left: -50px;
 	min-width: 100%;
 }
