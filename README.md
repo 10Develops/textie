@@ -13,6 +13,7 @@
 * Cut, Copy and Paste
 * Select All
 * Highlight text
+* Syntax highlighting (beta)
 * Uppercase and Lowercase text
 * Search text with search engines (Bing, Google, and Yahoo)
 * Trimming and Word wrap
