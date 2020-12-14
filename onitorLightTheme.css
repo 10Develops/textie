@@ -1,0 +1,42 @@
+body[onitor-theme='light']
+{
+    background: white;
+}	
+
+li[onitor-theme='light']
+{
+    color: black;
+    border: 2px solid black;
+    background: #E6E6E6;
+}
+
+#text[onitor-theme='light']
+{
+    border: 1.5px solid black;
+    background: #E6E6E6;
+}
+
+h1[onitor-theme='light']
+{
+    color: 	black;
+}
+
+h2[onitor-theme='light']
+{
+    color:	black;
+}
+
+h3[onitor-theme='light']
+{
+    color: 	black;
+}
+
+p[onitor-theme='light']
+{
+    color: 	black;
+}
+
+#download[onitor-theme='light']
+{
+    border: 2px solid black;
+}
