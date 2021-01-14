@@ -176,10 +176,9 @@ body
 	{	
 		position: absolute;
 		top: 95px;
-		right: 10px;	
-	}
-
-	#getit{
+		right: 10px;
+		max-width: 16vw;
+		word-wrap: break-word;
 	}
 
 	#text
