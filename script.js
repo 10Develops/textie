@@ -1,11 +1,22 @@
+var lastMenu, menuSender;
 window.onload = function(){
     document.onclick = function(e){
-        if(e.target.className != "dropdown"){
-            document.getElementsByClassName("dropdown-content")[0].style.display = null;
+        console.log(menuSender);
+        if(e.target != menuSender && lastMenu != undefined){
+            lastMenu.style.display = null;
         }
     };
 };
 
-function ShowDropdown(){
-    document.getElementsByClassName("dropdown-content")[0].style.display = "block";
+function ShowDropdown(e, className){
+    var visible = lastMenu != undefined && lastMenu.style.display == "block";
+    if(lastMenu != undefined && visible && e.tagName != "LI"){
+        lastMenu.style.display = null;
+    }
+    
+    if(!visible){
+        lastMenu = document.getElementsByClassName(className)[0];
+        menuSender = e;
+        lastMenu.style.display = "block";
+    }
 }

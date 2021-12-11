@@ -3,11 +3,25 @@ body[onitor-theme='light']
     background: white;
 }	
 
+a[onitor-theme='light']
+{
+    color: #808033;
+}
+
+h1[onitor-theme='light'], h2[onitor-theme='light'], h3[onitor-theme='light'], p[onitor-theme='light']
+{
+    color: 	black;
+}
+
 li[onitor-theme='light']
 {
     color: black;
-    border: 2px solid black;
     background: #E6E6E6;
+}
+
+.navbar[onitor-theme='light']
+{
+    border: 2px solid black;
 }
 
 #text[onitor-theme='light']
@@ -16,27 +30,15 @@ li[onitor-theme='light']
     background: #E6E6E6;
 }
 
-h1[onitor-theme='light']
+.splitbutton[onitor-theme='light']
 {
-    color: 	black;
+    border-color: black;
+    background: #02BB5B;
+    color: black;
 }
 
-h2[onitor-theme='light']
-{
-    color:	black;
-}
-
-h3[onitor-theme='light']
-{
-    color: 	black;
-}
-
-p[onitor-theme='light']
-{
-    color: 	black;
-}
-
-#download[onitor-theme='light']
+.splitbutton-dropdown-content[onitor-theme='light']
 {
     border: 2px solid black;
+    background: #E6E6E6;
 }

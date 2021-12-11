@@ -3,50 +3,32 @@
 	font-family: Segoe UI;
 }
 
-ul
+body
 {
+	background:	black;
+	overflow-y: auto;
 }
 
-li
-{
-	display: block;
+/*ul*/
+
+li{
 	color: white;
-	float: left;
-	text-align: center;
-	padding: 4px;
-	border: 2px solid white;
-	border-radius: 4px;
 	background: #1F1F1F;
-	margin-left: 4px;
-	margin-bottom: 2px;
-	width: 80px;
-	height: 20px;
 }
 
 a
 {
-	color: 	#FF9;
-	text-shadow: 2px 2px 4px black;
+	color: #FF9;
 }
 
-h1
+b
 {
-	color: 	white;
+	margin-top:	-40px;
 }
 
-h2
+h1, h2, h3, p
 {
-	color:	white;
-}
-
-h3
-{
-	color: 	white;
-}
-
-p
-{
-	color: 	white;
+	color: white;
 }
 
 #menu-left
@@ -59,23 +41,60 @@ p
 #menu-right
 {
 	position: absolute;
-	top: 40px;
+	top: 20px;
 	right: 2px;
 	z-index: 2;
 }
 
-#getit
+.navbar
+{
+	display: block;
+	float: left;
+	text-align: center;
+	padding: 4px;
+	border: 2px solid white;
+	border-radius: 4px;
+	margin-left: 4px;
+	margin-bottom: 2px;
+	width: 80px;
+	height: 20px;
+}
+
+.dropdown
+{
+	width: 80px;
+	height: 19px;
+	position: relative;
+	right: 20%;
+}
+
+.dropdown-content
+{
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: -46px;
+	padding-top: 4px;
+}
+
+.dropdown:hover .dropdown-content
+{
+	display: block;
+}
+
+#current-version
 {
 	position: absolute;
-	right: 6px;
+	top: 50px;
+	left: auto;
 }
 
 #text
 {
 	position: relative;
 	background: #1F1F1F;
-	margin-top: 2.5cm;
-	margin-bottom: 5mm;
+	margin-top: 3cm;
+	margin-bottom: 18mm;
     margin-left: auto;
 	margin-right: auto;
 	max-width: calc(22vw + 400px);
@@ -84,10 +103,6 @@ p
 	border: 1.5px solid white;
 	padding: 2px;
 	padding-bottom: 8px;
-}
-
-#center-text{
-	text-align: center;
 }
 
 #logo
@@ -107,50 +122,78 @@ p
 	text-align: center;
 }
 
-.dropdown{
-	width: 80px;
-	height: 19px;
-	position: relative;
-	right: 20%;
+#center-text
+{
+	text-align: center;
 }
 
-.dropdown-content{
+#container-clist
+{
+	height: auto;
+    margin: 0 auto;
+	max-width: 600px;
+}
+
+.column-list
+{
+	text-align: left;
+	column-count: 2;
+	column-gap: 1.6vw;
+}
+
+.splitbutton-action
+{
+	border-radius: 4px 0 0 4px;
+	margin-right: -8px;
+	width: 78px;
+	cursor: pointer;
+}
+
+.splitbutton
+{
+	border-color: white;
+	border-style: solid;
+	border-width: 2px 2px 2px 2px;
+	background: #014421;
+	color: white;
+	height: 38px;
+}
+
+.splitbutton-dropdownmenu
+{
+	display: inline-block;
+}
+
+.splitbutton-dropdown
+{
+	border-radius: 0 4px 4px 0;
+	display: inline-block;
+	width: 28px;
+}
+
+.splitbutton-dropdown-content
+{
 	display: none;
-	padding-top: 6px;
-	margin-left: -50px;
-	min-width: 100%;
+	position: absolute;
+	border: 2px solid white;
+	border-radius: 4px;
+	background: #1F1F1F;
+	margin-top: 1px;
+	margin-left: -35.6px;
+	z-index: 1;
 }
 
-.dropdown:hover .dropdown-content{
+.splitbutton-dropdown-content a
+{
+	text-align: center;
+	padding: 4px;
 	display: block;
 }
 
-#current-version
+#getit
 {
 	position: absolute;
-	top: 40px;
-	left: auto;
-}
-
-#download
-{
-	border: 2px solid white;
-	background: #014421;
-	height: 35px;
-	width: 80px;
-	color: white;
-	border-radius: 4px;
-}
-
-b
-{
-	margin-top:	-40px;
-}
-
-body
-{
-	background:	black;
-	overflow-y: auto;
+	right: 6px;
 }
 
 @media only screen and (min-width: 350px) {
@@ -186,7 +229,7 @@ body
 		margin-top: calc(6.5vw + 6mm);
 		margin-left: auto;
 		margin-right: auto;
-		margin-bottom: calc(5vh + 7vw);
+		margin-bottom: calc(4.4vh + 6.6vw + 20px);
 		max-width: calc(48vw);
 		width: calc(62% - 12vw);
 		min-height: calc(22vw + 120px);
@@ -199,11 +242,25 @@ body
 		background: white;
 	}	
 
+	a
+	{
+		color: #808033;
+	}
+
+	h1, h2, h3, p
+	{
+		color: black;
+	}
+
 	li
 	{
 		color: black;
-		border: 2px solid black;
 		background: #E6E6E6;
+	}
+
+	.navbar
+	{
+		border: 2px solid black;
 	}
 
 	#text
@@ -212,29 +269,17 @@ body
 		background: #E6E6E6;
 	}
 
-	h1
+	.splitbutton
 	{
-		color: 	black;
-	}
-	
-	h2
-	{
-		color:	black;
-	}
-	
-	h3
-	{
-		color: 	black;
-	}
-	
-	p
-	{
-		color: 	black;
+		border-color: black;
+		background: #02BB5B;
+		color: black;
 	}
 
-	#download
+	.splitbutton-dropdown-content
 	{
 		border: 2px solid black;
+		background: #E6E6E6;
 	}
  }
 

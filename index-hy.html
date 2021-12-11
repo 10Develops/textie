@@ -14,28 +14,51 @@
 	<body>
 		<div id="menu-left">
 			<ul>
-				<li><b>Տնէջ</b></li>
-				<li><a href="download-hy.html">Ներբեռնել</a></li>
+				<li class="navbar">
+					<b>Տնէջ</b>
+				</li>
+				<li class="navbar">
+					<a href="download-hy.html">Ներբեռնել</a>
+				</li>
 			</ul>
 		</div>
 		<div id="menu-right">
 			<ul>
-				<li class="dropdown" onclick="ShowDropdown();">Language
+				<li class="navbar dropdown" onclick="ShowDropdown(this, 'dropdown-content')">Language
 					<ul class="dropdown-content">
-						<li><a href="index.html">English</a></li>					
-						<li><a href="index-ru.html">Русский</a></li>
+						<li class="navbar">
+							<a href="index.html">English</a>
+						</li>					
+						<li class="navbar">
+							<a href="index-ru.html">Русский</a>
+						</li>
 					</ul>
 				</li>
 			</ul>
 		</div>
 		<div id="current-version">
-				<p style="font-size: 15px;">Ներկայիս տարբերակը՝ 0.9.6</p>
+			<p style="font-size: 15px;">Ներկայիս տարբերակը՝ 0.9.6</p>
 		</div>
 		<div id="text">
 			<img src="site_assets/logo.png" height="32px" width="32px" id="logo" />
 			<h1 id="header">Textie Editor</h1>
 			<div id="center-text">
 				<p style="font-size: 15px;" id="home-text">UWP անվճար աղբյուրի կոդի և տեքստային խմբագրիչ հավելում:</p>
+				<h2 style="font-size: 22px;">Հատկություններ</h2>
+				<div id="container-clist">
+					<ul class="column-list" style="font-size: 15px;">
+						<li>Ներդիրներով խմբագրում</li>
+						<li>Բացել և պահպանել</li>
+						<li>Ինքնապահպանել, պահպանել որպես և պահպանել բոլորը</li>
+						<li>Հետարկել և վերարկել</li>
+						<li>Փնտրել և փոխարինել</li>
+						<li>Որոնել տեքստը որոնման համակարգերում</li>
+						<li>Տպել, կիսվել, ամրացնել ֆայլը սկզբնական էկրանին</li>
+						<li>«Hot Exit» չպահպանված ֆայլերի համար</li>
+						<li>Վերջին ֆայլերը</li>
+						<li>Ժամանակակից UI և հարմարավետ UX</li>
+					  </ul>
+				</div>
 			</div>
 		</div>
 		<footer id="getit">

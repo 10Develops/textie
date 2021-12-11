@@ -14,28 +14,51 @@
 	<body>
 		<div id="menu-left">
 			<ul>
-				<li><b>Главная</b></li>
-				<li><a href="download.html">Загрузить</a></li>
+				<li class="navbar">
+					<b>Главная</b>
+				</li>
+				<li class="navbar">
+					<a href="download-ru.html">Загрузить</a>
+				</li>
 			</ul>
 		</div>
 		<div id="menu-right">
 			<ul>
-				<li class="dropdown" onclick="ShowDropdown();">Language
+				<li class="navbar dropdown" onclick="ShowDropdown(this, 'dropdown-content')">Language
 					<ul class="dropdown-content">
-						<li><a href="index.html">English</a></li>					
-						<li><a href="index-hy.html">Հայերեն</a></li>
+						<li class="navbar">
+							<a href="index.html">English</a>
+						</li>					
+						<li class="navbar">
+							<a href="index-hy.html">Հայերեն</a>
+						</li>
 					</ul>
 				</li>
 			</ul>
 		</div>
 		<div id="current-version">
-				<p>Текущая версия: 0.9.6</p>
+			<p>Текущая версия: 0.9.6</p>
 		</div>
 		<div id="text">
 			<img src="site_assets/logo.png" height="32px" width="32px" id="logo" />
 			<h1 id="header">Textie Editor</h1>
 			<div id="center-text">
 				<p id="home-text">Бесплатный UWP приложение для редактирования исходного кода и текста.</p>
+				<h2>Функции</h2>
+				<div id="container-clist">
+					<ul class="column-list">
+						<li>Редактирование с вкладками</li>
+						<li>Открыть и сохранить</li>
+						<li>Автосохранение, сохранить как и сохранить все</li>
+						<li>Отменить и вернуть</li>
+						<li>Найти и заменить</li>
+						<li>Поиск текста с помощью поисковых систем</li>
+						<li>Распечатать, поделиться, закрепить файл на начальном экране</li>
+						<li>«Hot Exit» для несохраннёных файлов</li>
+						<li>Последние файлы</li>
+						<li>Современный UI b удобный UX</li>
+					  </ul>
+				</div>
 			</div>
 		</div>
 		<footer id="getit">

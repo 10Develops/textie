@@ -13,15 +13,24 @@
 	<body>
 		<div id="menu-left">
 			<ul>
-				<li><a href="index-hy.html">Տնէջ</a></li>
-				<li><b>Ներբեռնել</b></li>
+				<li class="navbar">
+					<a href="index-hy.html">Տնէջ</a>
+				</li>
+				<li class="navbar">
+					<b>Ներբեռնել</b>
+				</li>
 			</ul>
 		</div>
 		<div id="menu-right">
 			<ul>
-				<li class="dropdown" onclick="ShowDropdown();">Language
+				<li class="navbar dropdown" onclick="ShowDropdown(this, 'dropdown-content')">Language
 					<ul class="dropdown-content">
-						<li><a href="download.html">English</a></li>					
+						<li class="navbar">
+							<a href="download.html">English</a>
+						</li>
+						<li class="navbar">
+							<a href="download-ru.html">Русский</a>
+						</li>				
 					</ul>
 				</li>
 			</ul>
@@ -35,25 +44,29 @@
 			<div id="center-text">
 				<h2 style="font-size: 20px;">Տեղադրում</h2>
 				<h3 style="font-size: 18px;">Appxbundle տեղադրում</h3>
-				<p style="font-size: 15px;">Սեղմեք <b>ներբեռնել</b> appxbundle ֆայլի ներբեռնման համար:<br>
-				Սովորական Windows 10-ում, դուք պետք է ստանաք հավելման ստորագրված արտոնագիրը և բացեք appxbundle ֆայլը:
-				Լրացուցիչ տեղեկությունների համար տես <a href="https://docs.microsoft.com/en-us/previous-versions/windows/apps/bg126232(v=win.10)#installing-the-app-package-without-using-a-visual-studio-script">
+				<p style="font-size: 15px;">Սեղմեք <b>ներբեռնել</b> appxbundle ֆայլի ներբեռնման համար: Նաև, փոխեք համակարգի տարեթիվը <b>2020</b>-ով, քանի որ վերջին տարբերակի արտոնագրի ժամկետը լրացել է (շարժականի վրա կարիք չկա):<br>
+				Աշխատասեղանային Windows 10 1607-ի և ավելի ուշի համար, դուք պետք է ստանաք հավելման ստորագրված արտոնագիրը և բացեք appxbundle ֆայլը:<br>
+				Ավելին իմանալու համար տես <a href="https://docs.microsoft.com/en-us/previous-versions/windows/apps/bg126232(v=win.10)#installing-the-app-package-without-using-a-visual-studio-script">
 				Windows RT-ում մշակողի փաթեթների տեղադրում</a> <small style="font-size: 10px;">(անգլերեն)</small>:<br>
-				Կամ ներբեռնեք ամբողջական փաթեթը և աշխատացրեք <b>Add-AppDevPackage.ps1</b>-ը սովորական Windows 10-ի բոլոր տարբերակներում, բջջայինի բոլոր տարբերակներում, բացեք appxbundle ֆայլը:
-				Ներբեռնված Textie Editor-ի appxbundle-ը տեղադրելու համար սկզբից համոզվեք,
-				որ <b>չհրապարակված հավելման</b> <small>(sideloading)</small> կամ <b>մշակողի ռեժիմը</b> 
-				<small>(developer mode)</small> միացված է:<br> 
-				Չհրապարակված հավելման կամ մշակողի ռեժիմը միացնելու համառ, մտեք <b>Settings > Update & Security > For Developers</b> 
-				և ընտրեք <b>Sideload apps</b> կամ <b>Developer mode</b>:<br> 
-				Եթե չհրապարակված հավելման կամ մշակողի ռեժիմն ընտրված է, 
-				դուք կստանաք զգուշացում, որ անվստահելի աղբյուրներից հավելման տեղադրումը կարող է բացահայտել Ձեր սարքավորումը և տվյալները, 
-				կամ վնասել Ձեր սարքավորումը, սեղմեք <b>yes</b>:<br> Հիմա, դուք կարող եք տեղադրել Textie Editor-ի appxbundle-ը: 
-				Սեղմեք ներբեռնված appxbundle-ի վրա և Ձեզ կցուցադրվի տեղադրման պատուհանը, սեղմեք <b>install</b> և սպասեք, 
-				եթե հավելումը չի հայտնվել բոլոր հավելումների ցանկում, փորձեք նորից:<br> 
+				Կամ կարող եք ներբեռնել ամբողջական փաթեթը և աշխատացնել <b>Add-AppDevPackage.ps1</b>-ը աշխատասեղանային Windows 10-ի բոլոր տարբերակներում:<br>
+				Ներբեռնված Textie Editor-ի փաթեթը տեղադրելու համար նախ համոզվեք, որ կողաբեռնման կամ մշակողի ռեժիմը միացված է:<br> 
+				Կողաբեռնման կամ մշակողի ռեժիմը միացնելու համար, մտեք <b>Կարգավորում > Արդիացում և Անվտանգություն > Մշակողների համար</b> և ընտրեք <b>Կողաբեռնված գործադիրներ</b> կամ <b>Մշակողի ռեժիմ</b>:<br> 
+				Եթե կողաբեռնման կամ մշակողի ռեժիմն ընտրված է, 
+				դուք կզգուշացվեք, որ անվստահելի աղբյուրներից հավելման տեղադրումը կարող է բացահայտել Ձեր սարքը և տվյալները, 
+				կամ վնասել Ձեր սարքը, սեղմեք <b>այո</b>: Աշխատասեղանային տարբերակներում, Windows-ը կարող է ներբեռնել մշակողի փաթեթները, սպասեք մինչև ավարտը:<br> Հիմա, դուք կարող եք տեղադրել Textie Editor-ի appxbundle-ը: 
+				Սեղմեք ներբեռնված appxbundle-ի վրա և կցուցադրվի տեղադրման պատուհանը, սեղմեք <b>տեղադրել</b> և սպասեք, 
+				եթե հավելումը չի հայտնվել բոլոր հավելումների ցանկում, փորձեք նորից:<br>
 				Հիմա Textie Editor հավելումը տեղադրված է:</p>
-				<a href="TextieEditor_0.9.6.0_x86_x64_arm.appxbundle"><input type="button" value="Ներբեռնել" id="download"/></a><br>
-				<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6.0_ARM64.appx">Ներբեռնել ARM64-ի համար</a><br>
-				<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6_FullPackage.zip">Ներբեռնել ամբողջական փաթեթը</a>
+				<div class="splitbutton-dropdownmenu">
+					<a href="TextieEditor_0.9.6.0_x86_x64_arm.appxbundle" style="text-decoration: none;">
+						<input type="button" value="Ներբեռնել" class="splitbutton splitbutton-action"/>
+					</a>
+					<input type="button" value="&#9660;" class="splitbutton splitbutton-dropdown" onclick="ShowDropdown(this, 'splitbutton-dropdown-content')" />
+					<div class="splitbutton-dropdown-content" style="margin-left: -85px;">
+						<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6.0_ARM64.appx">Ներբեռնել ARM64-ի համար</a>
+						<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6_FullPackage.zip">Ներբեռնել ամբողջական փաթեթը</a>
+					</div>
+				</div>
 			</div>
 		</div>
 		<footer id="getit">

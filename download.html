@@ -12,21 +12,30 @@
 	<body>
 		<div id="menu-left">
 			<ul>
-				<li><a href="index.html">Home</a></li>
-				<li><b>Download</b></li>
+				<li class="navbar">
+					<a href="index.html">Home</a>
+				</li>
+				<li class="navbar">
+					<b>Download</b>
+				</li>
 			</ul>
 		</div>
 		<div id="menu-right">
 			<ul>
-				<li class="dropdown" onclick="ShowDropdown();">Language
+				<li class="navbar dropdown" onclick="ShowDropdown(this, 'dropdown-content')">Language
 					<ul class="dropdown-content">
-						<li><a href="download-hy.html">Հայերեն</a></li>					
+						<li class="navbar">
+							<a href="download-ru.html">Русский</a>
+						</li>	
+						<li class="navbar">
+							<a href="download-hy.html">Հայերեն</a>
+						</li>					
 					</ul>
 				</li>
 				</ul>
 		</div>
 		<div id="current-version">
-				<p>Current version: 0.9.6</p>
+			<p>Current version: 0.9.6</p>
 		</div>
 		<div id="text">
 			<img src="site_assets/logo.png" height="32px" width="32px" id="logo" />
@@ -34,23 +43,29 @@
 			<div id="center-text">
 				<h2>Installation</h2>
 				<h3>Appxbundle Installation</h3>
-				<p>Click <b>download</b> to download the appxbundle file.<br>
-				On desktop Windows 10 1607 or later, you need to obtain the Certificate that signed the App and open the appxbundle file. 
+				<p>Click <b>download</b> to download the appxbundle file. Also change the system date to <b>2020</b>, because of the certificate of last version has expired (no need on mobile).<br>
+				For desktop Windows 10 1607 or later, you need to obtain the Certificate that signed the App and open the appxbundle file.<br>
 				For more info, see <a href="https://docs.microsoft.com/en-us/previous-versions/windows/apps/bg126232(v=win.10)#installing-the-app-package-without-using-a-visual-studio-script">
 				Installing developer packages on Windows RT</a>.<br>
-				Or you can download the full package and run <b>Add-AppDevPackage.ps1</b> on all versions of desktop Windows 10, on all versions of mobile, open the appxbundle file.
-				To install downloaded appxbundle of Textie Editor, first make sure if sideloading or developer mode is enabled.<br> 
-				To enable sideloading or developer mode, go to <b>Settings > Update & Security > For Developers</b> 
-				and set <b>Sideload apps</b> or <b>Developer mode</b>.<br> 
+				Or you can download the full package and run <b>Add-AppDevPackage.ps1</b> on all versions of desktop Windows 10.<br>
+				To install downloaded Textie Editor package, first make sure if sideloading or developer mode is enabled.<br> 
+				To enable sideloading or developer mode, go to <b>Settings > Update & Security > For Developers</b> and set <b>Sideload apps</b> or <b>Developer mode</b>.<br> 
 				If sideloading or developer mode is selected, 
 				you will be receive a warning that installing app from untrusted sources could expose your device and data, 
-				or harm your device, click <b>yes</b>.<br> Now you can install Textie Editor appxbundle. 
+				or harm your device, click <b>yes</b>. On desktop versions, the Windows might download developer packages, wait until completion.<br> Now you can install Textie Editor appxbundle. 
 				Click to downloaded appxbundle and you'll be shown installation window, click <b>install</b> and wait, 
 				if the app is not appeared in all apps list, try again.<br>
 				Now Textie Editor app is installed.</p>
-				<a href="TextieEditor_0.9.6.0_x86_x64_arm.appxbundle"><input type="button" value="Download" id="download"/></a><br>
-				<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6.0_ARM64.appx">Download for ARM64</a><br>
-				<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6_FullPackage.zip">Download full package</a>
+				<div class="splitbutton-dropdownmenu">
+					<a href="TextieEditor_0.9.6.0_x86_x64_arm.appxbundle" style="text-decoration: none;">
+						<input type="button" value="Download" class="splitbutton splitbutton-action"/>
+					</a>
+					<input type="button" value="&#9660;" class="splitbutton splitbutton-dropdown" onclick="ShowDropdown(this, 'splitbutton-dropdown-content')" />
+					<div class="splitbutton-dropdown-content">
+						<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6.0_ARM64.appx">Download for ARM64</a>
+						<a href="https://github.com/10Develops/textie/releases/download/0.9.6/TextieEditor_0.9.6_FullPackage.zip">Download full package</a>
+					</div>
+				</div>
 			</div>
 		</div>
 		<footer id="getit">
