@@ -3,6 +3,7 @@
 
 ## Features
 * Tabbed editing
+* Light and dark themes support
 * Open and Save
 * Auto-save
 * Save as and Save all
