@@ -2,8 +2,8 @@
 <h4>Free source code and text editor app. Textie is have an comfortable UX, you can easily use multi-tabbing with swipe to change tab on causel!</h4>
 
 ## Announcements
-* Annuncing Textie Editor for HaikuOS!
-* Annuncing Textie Editor 0.9.7 for UWP (Windows 11, Windows 10, Windows 10 Mobile)!
+* Announcing Textie Editor for HaikuOS!
+* Announcing Textie Editor 0.9.7 for UWP (Windows 11, Windows 10, Windows 10 Mobile)!
 
 ## Features
 * Tabbed editing
