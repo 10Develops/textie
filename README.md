@@ -27,5 +27,14 @@
 * Hot Exit for Unsaved Files (opens unsaved files when app launched again)
 * Recent Files
 
+## Donate
+<table>
+  <tr>
+    <td><img src="https://bitcoin.org/img/icons/opengraph.png" alt="Bitcoin" width="100px"></td>
+    <td><img src="bitcoin_qr_code.png" alt="Bitcoin QR code" width="100px"></td>
+    <td><samp>148grYTkmWABsGzFHQp8MHmkqTiv4ZJYBu</samp></td>
+  </tr>
+</table>
+
 ## How to use
 Add a reference to <b>UnitedCodebase</b> (<a href="https://www.nuget.org/packages/UnitedCodebase/0.9.0.1">link</a>).
